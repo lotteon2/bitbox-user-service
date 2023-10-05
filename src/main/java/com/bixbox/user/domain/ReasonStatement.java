@@ -23,7 +23,7 @@ public class ReasonStatement {
     @JoinColumn(name = "attendance_id", nullable = false)
     private Attendance attendance;
 
-    @OneToOne(mappedBy = "reasonStatement", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "reasonStatement", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private RejectReason rejectReason;
 
     @Column(name = "reason_title", nullable = false)
