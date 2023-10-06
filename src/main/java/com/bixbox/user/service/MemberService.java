@@ -20,7 +20,7 @@ import java.util.List;
 @Slf4j
 public class MemberService {
     private final MemberInfoRepository memberInfoRepository;
-    private static final int SIZE = 8;
+    private static final int SIZE = 10;
 
     /**
      * 회원가입

@@ -21,7 +21,7 @@ public class MemberController {
      * 회원가입
      */
     @PostMapping("signup")
-    public ResponseEntity<Member> regustMemberInfo(MemberDto memberDto) {
+    public ResponseEntity<Member> regustMemberInfo(@RequestBody MemberDto memberDto) {
         return ResponseEntity.ok(memberService.registMemberInfo(memberDto));
     }
 
