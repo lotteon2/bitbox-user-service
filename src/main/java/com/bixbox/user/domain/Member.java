@@ -1,5 +1,9 @@
 package com.bixbox.user.domain;
 
+import com.bixbox.user.dto.MemberDto;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
@@ -11,6 +15,9 @@ import java.util.List;
 @Entity
 @Table(name="member")
 @DynamicInsert
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Member {
     @Id
     @Column(name="member_id")
@@ -51,4 +58,14 @@ public class Member {
 
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
+
+    public static Member convertMemberDtoToMember(MemberDto memberDto) {
+        return Member.builder()
+                .memberName(memberDto.getMemberName())
+                .memberNickName(memberDto.getMemberNickname())
+                .memberEmail(memberDto.getMemberEmail())
+                .memberProfileImg(memberDto.getMemberProfileImg())
+                .memberAuthority(memberDto.getMemberAuthority())
+                .build();
+    }
 }
