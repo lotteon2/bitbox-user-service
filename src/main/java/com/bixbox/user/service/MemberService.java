@@ -38,7 +38,7 @@ public class MemberService {
      * @return MemberInfoResponse
      */
     public MemberInfoResponse getMyInfo(String memberId) {
-        return memberInfoRepository.fintByMemberId(memberId);
+        return memberInfoRepository.findByMemberId(memberId);
     }
 
     /**
@@ -56,7 +56,7 @@ public class MemberService {
         // ClassId에 해당하는 교육생 정보 저장
         // limit offset 적용
         for (Long classId: classIdList) {
-            traineeList.add(memberInfoRepository.findAllByClassId(classId, paging));
+            traineeList.add(memberInfoRepository.findByClassId(classId));
         }
 
         long totalCount = memberInfoRepository.count();

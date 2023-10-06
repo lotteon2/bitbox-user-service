@@ -5,6 +5,7 @@ import com.bixbox.user.service.response.MemberInfoResponse;
 import org.springframework.data.repository.CrudRepository;
 
 import java.awt.print.Pageable;
+import java.util.List;
 
 public interface MemberInfoRepository extends CrudRepository<Member, Long> {
 
@@ -13,7 +14,7 @@ public interface MemberInfoRepository extends CrudRepository<Member, Long> {
      * @param memberId
      * @return MemberInfoResponse
      */
-    MemberInfoResponse fintByMemberId(String memberId);
+    MemberInfoResponse findByMemberId(String memberId);
 
 
     /**
@@ -22,5 +23,5 @@ public interface MemberInfoRepository extends CrudRepository<Member, Long> {
      * @param paging
      * @return MemberInfoResponse
      */
-    MemberInfoResponse findAllByClassId(Long classId, Pageable paging);
+    MemberInfoResponse findByClassId(Long classId);
 }

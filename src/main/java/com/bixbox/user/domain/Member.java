@@ -36,7 +36,7 @@ public class Member {
     private String memberName;
 
     @Column(name = "member_nickname", nullable = false)
-    private String memberNickName;
+    private String memberNickname;
 
     @Column(name = "member_email", nullable = false)
     private String memberEmail;
@@ -62,7 +62,7 @@ public class Member {
     public static Member convertMemberDtoToMember(MemberDto memberDto) {
         return Member.builder()
                 .memberName(memberDto.getMemberName())
-                .memberNickName(memberDto.getMemberNickname())
+                .memberNickname(memberDto.getMemberNickname())
                 .memberEmail(memberDto.getMemberEmail())
                 .memberProfileImg(memberDto.getMemberProfileImg())
                 .memberAuthority(memberDto.getMemberAuthority())
