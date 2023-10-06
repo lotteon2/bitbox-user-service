@@ -20,7 +20,7 @@ public class MemberController {
     /**
      * 회원가입
      */
-    @PostMapping("signup")
+    @PostMapping("/signup")
     public ResponseEntity<Member> regustMemberInfo(@RequestBody MemberDto memberDto) {
         return ResponseEntity.ok(memberService.registMemberInfo(memberDto));
     }
@@ -29,7 +29,7 @@ public class MemberController {
      * 회원정보 조회(일반 회원)
      */
     @GetMapping("mypage")
-    public ResponseEntity<MemberInfoResponse> getMyInfo(String memberId) {
+    public ResponseEntity<MemberInfoResponse> getMyInfo(@RequestHeader String memberId) {
         return ResponseEntity.ok(memberService.getMyInfo(memberId));
     }
 

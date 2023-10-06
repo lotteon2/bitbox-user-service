@@ -4,7 +4,9 @@ import com.bixbox.user.dto.MemberDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
@@ -20,6 +22,8 @@ import java.util.List;
 @Builder
 public class Member {
     @Id
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name="uuid2", strategy = "uuid2")
     @Column(name="member_id")
     private String memberId;
 
@@ -44,18 +48,21 @@ public class Member {
     @Column(name = "member_profile_img", nullable = false)
     private String memberProfileImg;
 
+    @ColumnDefault("0")
     @Column(name = "member_credit", nullable = false)
     private int memberCredit;
 
+    @ColumnDefault("`GENERAL`")
     @Column(name = "member_authority", nullable = false)
     private String memberAuthority;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, columnDefinition = "timestamp default NOW()")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at", nullable = false, columnDefinition = "timestamp default NOW()")
     private LocalDateTime updatedAt;
 
+    @ColumnDefault("false")
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
 
