@@ -1,19 +1,16 @@
 package com.bixbox.user.service.response;
 
+import com.bixbox.user.domain.Member;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Builder
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class MemberInfoWithCountResponse {
-    private List<MemberInfoResponse> memberInfoList;
+    private List<Member> memberInfoList;
+    @JsonProperty("total_count")
     private long totalCount;
-
-    public MemberInfoWithCountResponse(List<MemberInfoResponse> memberInfoList, long totalCount) {
-        this.memberInfoList = memberInfoList;
-        this.totalCount = totalCount;
-    }
 }

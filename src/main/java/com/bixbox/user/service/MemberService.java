@@ -2,25 +2,23 @@ package com.bixbox.user.service;
 
 import com.bixbox.user.domain.Member;
 import com.bixbox.user.dto.MemberDto;
+import com.bixbox.user.exception.DuplicationEmailException;
+import com.bixbox.user.exception.InvalidMemberIdException;
 import com.bixbox.user.repository.MemberInfoRepository;
 import com.bixbox.user.service.response.MemberInfoResponse;
 import com.bixbox.user.service.response.MemberInfoWithCountResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Pageable;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class MemberService {
     private final MemberInfoRepository memberInfoRepository;
-    private static final int SIZE = 10;
 
     /**
      * 회원가입
@@ -28,6 +26,11 @@ public class MemberService {
      * @return MemberInfoRepository
      */
     public Member registMemberInfo(MemberDto memberDto) {
+        // 회원 정보가 DB에 존재하는지 확인
+        if (memberInfoRepository.countByMemberEmailAndDeletedIsFalse(memberDto.getMemberEmail()) != 0) {
+            throw new DuplicationEmailException("ERROR100 - 중복 이메일 에러");
+        }
+
         return memberInfoRepository.save(Member.convertMemberDtoToMember(memberDto));
     }
 
@@ -38,30 +41,27 @@ public class MemberService {
      * @return MemberInfoResponse
      */
     public MemberInfoResponse getMyInfo(String memberId) {
-        return memberInfoRepository.findByMemberId(memberId);
+        Member memberInfo = memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberId);
+
+        if (memberInfo == null) {
+            throw new InvalidMemberIdException("ERROR101 - 존재하지 않는 회원정보");
+        }
+        return MemberInfoResponse.convertMemberToMemberInfoResponse(memberInfo);
     }
 
     /**
      * 회원정보 조회(관리자)
      * classId에 해당하는 사용자 리스트 조회
-     * @param classIdList
-     * @param page
+     * @param classId
+     * @param paging
      * @return MemberInfoWithCountResponse
      */
-    public MemberInfoWithCountResponse getTraineeInfo(List<Long> classIdList, int page) {
-        Pageable paging = (Pageable) PageRequest.of(page, SIZE);
-
-        List<MemberInfoResponse> traineeList = new ArrayList<>();
-
-        // ClassId에 해당하는 교육생 정보 저장
-        // limit offset 적용
-        for (Long classId: classIdList) {
-            traineeList.add(memberInfoRepository.findByClassId(classId));
-        }
+    public MemberInfoWithCountResponse getTraineeInfo(Long classId, Pageable paging) {
+        Page<Member> traineeList = memberInfoRepository.findAllByClassId(classId, paging);
 
         long totalCount = memberInfoRepository.count();
 
-        return new MemberInfoWithCountResponse(traineeList, totalCount);
+        return MemberInfoWithCountResponse.builder().memberInfoList(traineeList.getContent()).totalCount(totalCount).build();
     }
 
 }

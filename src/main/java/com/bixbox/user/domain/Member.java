@@ -1,9 +1,7 @@
 package com.bixbox.user.domain;
 
 import com.bixbox.user.dto.MemberDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.GenericGenerator;
@@ -15,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
 @Table(name="member")
 @DynamicInsert
 @NoArgsConstructor
@@ -36,39 +36,36 @@ public class Member {
     @Column(name = "class_id")
     private Long classId;
 
-    @Column(name = "member_name")
-    private String memberName;
-
     @Column(name = "member_nickname", nullable = false)
     private String memberNickname;
 
     @Column(name = "member_email", nullable = false)
     private String memberEmail;
 
-    @Column(name = "member_profile_img", nullable = false)
+    @Column(name = "member_profile_img", nullable = false, columnDefinition = "LONGTEXT")
     private String memberProfileImg;
 
     @ColumnDefault("0")
     @Column(name = "member_credit", nullable = false)
     private int memberCredit;
 
-    @ColumnDefault("`GENERAL`")
     @Column(name = "member_authority", nullable = false)
     private String memberAuthority;
 
-    @Column(name = "created_at", nullable = false, columnDefinition = "timestamp default NOW()")
+    @ColumnDefault("now()")
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false, columnDefinition = "timestamp default NOW()")
+    @ColumnDefault("now()")
+    @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt;
 
     @ColumnDefault("false")
-    @Column(name = "is_deleted", nullable = false)
-    private boolean isDeleted;
+    @Column(name = "deleted", nullable = false, columnDefinition = "TINYINT(1)")
+    private boolean deleted;
 
     public static Member convertMemberDtoToMember(MemberDto memberDto) {
         return Member.builder()
-                .memberName(memberDto.getMemberName())
                 .memberNickname(memberDto.getMemberNickname())
                 .memberEmail(memberDto.getMemberEmail())
                 .memberProfileImg(memberDto.getMemberProfileImg())

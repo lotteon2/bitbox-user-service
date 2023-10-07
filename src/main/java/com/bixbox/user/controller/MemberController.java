@@ -1,15 +1,16 @@
 package com.bixbox.user.controller;
 
-import com.bixbox.user.domain.Member;
 import com.bixbox.user.dto.MemberDto;
 import com.bixbox.user.service.MemberService;
 import com.bixbox.user.service.response.MemberInfoResponse;
 import com.bixbox.user.service.response.MemberInfoWithCountResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.validation.Valid;
+
 
 @RestController
 @RequestMapping("/member")
@@ -21,8 +22,8 @@ public class MemberController {
      * 회원가입
      */
     @PostMapping("/signup")
-    public ResponseEntity<Member> regustMemberInfo(@RequestBody MemberDto memberDto) {
-        return ResponseEntity.ok(memberService.registMemberInfo(memberDto));
+    public ResponseEntity<String> regustMemberInfo(@Valid @RequestBody MemberDto memberDto) {
+        return ResponseEntity.ok(memberService.registMemberInfo(memberDto).getMemberId());
     }
 
     /**
@@ -36,9 +37,9 @@ public class MemberController {
     /**
      * 교육생 정보 조회(관리자)
      */
-    // TODO: Pagination 처리한거 이게 맞는지 확인 요망
-    @GetMapping("admin")
-    public ResponseEntity<MemberInfoWithCountResponse> getTraineeInfo(@PathVariable("classId") List<Long> classId, @PathVariable("page") int page) {
-        return ResponseEntity.ok(memberService.getTraineeInfo(classId, page));
+    @GetMapping("admin/{classId}")
+    public ResponseEntity<MemberInfoWithCountResponse> getTraineeInfo(@PathVariable Long classId, Pageable paging) {
+        return ResponseEntity.ok(memberService.getTraineeInfo(classId, paging));
     }
+
 }
