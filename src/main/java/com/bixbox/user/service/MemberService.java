@@ -2,6 +2,7 @@ package com.bixbox.user.service;
 
 import com.bixbox.user.domain.Member;
 import com.bixbox.user.dto.MemberDto;
+import com.bixbox.user.dto.MemberUpdateDto;
 import com.bixbox.user.exception.DuplicationEmailException;
 import com.bixbox.user.exception.InvalidMemberIdException;
 import com.bixbox.user.repository.MemberInfoRepository;
@@ -57,11 +58,48 @@ public class MemberService {
      * @return MemberInfoWithCountResponse
      */
     public MemberInfoWithCountResponse getTraineeInfo(Long classId, Pageable paging) {
-        Page<Member> traineeList = memberInfoRepository.findAllByClassId(classId, paging);
+        Page<Member> traineeList = memberInfoRepository.findAllByClassIdOrderByMemberNickname(classId, paging);
 
         long totalCount = memberInfoRepository.count();
 
         return MemberInfoWithCountResponse.builder().memberInfoList(traineeList.getContent()).totalCount(totalCount).build();
+    }
+
+    /**
+     * 회원정보 수정
+     * @param memberId
+     * @param memberUpdateDto
+     * @return Member
+     */
+    public Member updateMemberInfo(String memberId, MemberUpdateDto memberUpdateDto) {
+        Member memberInfo = memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberId);
+
+        if (memberInfo == null) throw new InvalidMemberIdException("ERROR101 - 존재하지 않는 회원정보");
+        if (memberUpdateDto.getMemberNickname() != null) memberInfo.setMemberNickname(memberUpdateDto.getMemberNickname());
+        if (memberUpdateDto.getMemberProfileImg() != null) memberInfo.setMemberProfileImg(memberUpdateDto.getMemberProfileImg());
+        if (memberUpdateDto.getMemberAuthority() != null) memberInfo.setMemberAuthority(memberUpdateDto.getMemberAuthority());
+        return memberInfoRepository.save(memberInfo);
+    }
+
+    /**
+     * 회원 탈퇴
+     * @param memberId
+     * @return true
+     */
+    public boolean withdrawMember(String memberId) {
+        Member memberInfo = memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberId);
+
+        memberInfo.setDeleted(true);
+        return memberInfoRepository.save(memberInfo).isDeleted();
+    }
+
+    public Member updateMemberInfoAdmin(MemberUpdateDto memberUpdateDto) {
+        Member memberInfo = memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberUpdateDto.getMemberId());
+
+        if (memberInfo == null) throw new InvalidMemberIdException("ERROR101 - 존재하지 않는 회원정보");
+        if (memberUpdateDto.getMemberAuthority() != null) memberInfo.setMemberAuthority(memberUpdateDto.getMemberAuthority());
+        return memberInfoRepository.save(memberInfo);
+
     }
 
 }

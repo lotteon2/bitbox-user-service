@@ -15,12 +15,14 @@ public class MemberInfoResponse {
     private String memberNickname;
     private String memberEmail;
     private String memberProfileImg;
+    private String memberAuthority;
     private int memberCredit;
 
     public static MemberInfoResponse convertMemberToMemberInfoResponse(Member memberInfo) {
         return MemberInfoResponse.builder().memberNickname(memberInfo.getMemberNickname())
                 .memberEmail(memberInfo.getMemberEmail())
                 .memberProfileImg(memberInfo.getMemberProfileImg())
+                .memberAuthority(memberInfo.getMemberAuthority())
                 .memberCredit(memberInfo.getMemberCredit()).build();
     }
 }

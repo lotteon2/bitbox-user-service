@@ -16,7 +16,6 @@ public interface MemberInfoRepository extends CrudRepository<Member, String> {
      * @param memberEmail
      * @return int
      */
-//    @Query("SELECT count(mem.memberEmail) FROM  Member mem WHERE mem.memberEmail = :memberEmail AND mem.isDeleted = false")
     int countByMemberEmailAndDeletedIsFalse(String memberEmail);
 
     /**
@@ -24,7 +23,6 @@ public interface MemberInfoRepository extends CrudRepository<Member, String> {
      * @param memberId
      * @return MemberInfoResponse
      */
-//    @Query("SELECT mem FROM  Member mem WHERE mem.memberId = :memberId AND mem.isDeleted = false ")
     Member findByMemberIdAndDeletedIsFalse(String memberId);
 
 
@@ -33,6 +31,6 @@ public interface MemberInfoRepository extends CrudRepository<Member, String> {
      * @param classId
      * @return MemberInfoResponse
      */
-    Page<Member> findAllByClassId(Long classId, Pageable paging);
+    Page<Member> findAllByClassIdOrderByMemberNickname(Long classId, Pageable paging);
 
 }

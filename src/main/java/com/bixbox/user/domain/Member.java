@@ -4,7 +4,10 @@ import com.bixbox.user.dto.MemberDto;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
@@ -17,6 +20,7 @@ import java.util.List;
 @Setter
 @Table(name="member")
 @DynamicInsert
+@DynamicUpdate
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -27,10 +31,10 @@ public class Member {
     @Column(name="member_id")
     private String memberId;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Attendance> attendances;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ReasonStatement> reasonStatements;
 
     @Column(name = "class_id")
@@ -52,10 +56,12 @@ public class Member {
     @Column(name = "member_authority", nullable = false)
     private String memberAuthority;
 
+    @CreatedDate
     @ColumnDefault("now()")
-    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(name = "created_at", nullable = false, columnDefinition = "TIMESTAMP", updatable = false)
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
     @ColumnDefault("now()")
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime updatedAt;
@@ -72,4 +78,5 @@ public class Member {
                 .memberAuthority(memberDto.getMemberAuthority())
                 .build();
     }
+
 }
