@@ -93,7 +93,7 @@ public class MemberService {
         Member memberInfo = findByMemberId(memberUpdateDto.getMemberId());
 
         memberInfo.setMemberAuthority(AuthorityType.valueOf(memberUpdateDto.getMemberAuthority()));
-        return memberInfoRepository.save(memberInfo);
+        return memberInfo;
     }
 
     /**
@@ -106,7 +106,7 @@ public class MemberService {
         Member memberInfo = findByMemberId(memberId);
 
         memberInfo.setDeleted(true);
-        return memberInfoRepository.save(memberInfo).isDeleted();
+        return memberInfo.isDeleted();
     }
 
 
@@ -126,7 +126,7 @@ public class MemberService {
         }
 
         memberInfo.setMemberCredit(memberInfo.getMemberCredit() - memberCreditDto.getCredit());
-        return memberInfoRepository.save(memberInfo).getMemberCredit();
+        return memberInfo.getMemberCredit();
     }
 
     /**
@@ -140,7 +140,7 @@ public class MemberService {
         Member memberInfo = findByMemberId(memberCreditDto.getMemberId());
 
         memberInfo.setMemberCredit(memberInfo.getMemberCredit() + memberCreditDto.getCredit());
-        return memberInfoRepository.save(memberInfo).getMemberCredit();
+        return memberInfo.getMemberCredit();
     }
     /**
      * 크레딧 결제 후 크레딧 적립
@@ -153,7 +153,7 @@ public class MemberService {
         Member memberInfo = memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberPaymentDto.getMemberId()).orElseThrow(() -> new InvalidMemberIdException("ERROR101 - 존재하지 않는 회원정보"));
 
         memberInfo.setMemberCredit(memberInfo.getMemberCredit() + memberPaymentDto.getMemberCredit());
-        return memberInfoRepository.save(memberInfo).getMemberCredit();
+        return memberInfo.getMemberCredit();
     }
 
 }
