@@ -1,6 +1,8 @@
 package com.bitbox.user.exception.advice;
 
 import com.bitbox.user.exception.DuplicationEmailException;
+import com.bitbox.user.exception.InvalidAttendanceException;
+import com.bitbox.user.exception.InvalidRangeAttendanceException;
 import com.bitbox.user.exception.response.ErrorResponse;
 import com.bitbox.user.exception.InvalidMemberIdException;
 import org.springframework.http.HttpStatus;
@@ -32,9 +34,34 @@ public class ApiControllerAdvice {
         return getErrorResponse(e);
     }
 
+    /**
+     * 출결정보 조회 에러
+     * @param e
+     * @return ErrorResponse
+     */
+    @ExceptionHandler(InvalidAttendanceException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidAttendanceIdException(InvalidAttendanceException e) {
+        return getErrorResponse(e);
+    }
+
+    /**
+     * 유효하지 않은 위치 정보 에러
+     * @param e
+     * @return ErrorResponse
+     */
+    @ExceptionHandler(InvalidRangeAttendanceException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidRangeAttendanceException(InvalidAttendanceException e) {
+        return getErrorResponse(e);
+    }
+
     private ErrorResponse getErrorResponse(RuntimeException e) {
         return ErrorResponse.builder()
                 .message(e.getMessage())
                 .build();
     }
+
+
+
 }

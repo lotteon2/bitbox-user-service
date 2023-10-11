@@ -1,14 +1,22 @@
 package com.bitbox.user.domain;
 
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "attendance")
+@Getter
+@Setter
+@Table(name="attendance")
 @DynamicInsert
+@DynamicUpdate
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

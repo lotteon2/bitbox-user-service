@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 @Getter
 public class CurrentLocationDto {
     @NotEmpty(message = "필수 입력값입니다")
-    private long lat;
+    private double lat;
     @NotEmpty(message = "필수 입력값입니다")
-    private long lng;
+    private double lng;
 }
