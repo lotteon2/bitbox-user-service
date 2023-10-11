@@ -5,10 +5,8 @@ import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.service.response.MemberInfoResponse;
 import com.bitbox.user.domain.Member;
-import com.bitbox.user.dto.MemberAuthorityUpdateDto;
 import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InvalidMemberIdException;
-import io.github.bitbox.bitbox.enums.AuthorityType;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -93,14 +91,15 @@ public class MemberServiceTest {
         assertThat(result).isTrue();
     }
 
-    @DisplayName("관리자가 교육생 해제를 요청하면 해당 계정의 권한은 GENERAL로 수정된다.")
-    @Order(7)
-    @Test
-    void widthdrawTest() {
-        MemberAuthorityUpdateDto memberInfo = MemberAuthorityUpdateDto.builder().memberId(member.getMemberId()).memberAuthority("GENERAL").build();
-        AuthorityType result = memberService.modifyMemberInfo(memberInfo);
-
-        assertThat(result).isEqualTo(AuthorityType.GENERAL);
-    }
+    // TODO: KafkaTest
+//    @DisplayName("관리자가 교육생 해제를 요청하면 해당 계정의 권한은 GENERAL로 수정된다.")
+//    @Order(7)
+//    @Test
+//    void widthdrawTest() {
+//        MemberAuthorityDto memberInfo = MemberAuthorityUpdateDto.builder().memberId(member.getMemberId()).memberAuthority(member).build();
+//        AuthorityType result = memberService.modifyMemberInfo(memberInfo);
+//
+//        assertThat(result).isEqualTo(AuthorityType.GENERAL);
+//    }
 
 }

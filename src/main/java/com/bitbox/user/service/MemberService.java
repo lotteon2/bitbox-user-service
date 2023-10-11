@@ -10,6 +10,7 @@ import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InSufficientCreditException;
 import com.bitbox.user.exception.InvalidMemberIdException;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
+import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
 import io.github.bitbox.bitbox.dto.MemberCreditDto;
 import io.github.bitbox.bitbox.dto.MemberPaymentDto;
 import io.github.bitbox.bitbox.enums.AuthorityType;
@@ -89,15 +90,15 @@ public class MemberService {
 
     /**
      * 회원 권한 변경
-     * @param memberAuthorityUpdateDto
+     * @param memberAuthorityDto
      * @return
      */
     @KafkaListener(topics = "${modifyTopic}")
     @Transactional
-    public AuthorityType modifyMemberInfo(MemberAuthorityUpdateDto memberAuthorityUpdateDto) {
-        Member memberInfo = findByMemberId(memberAuthorityUpdateDto.getMemberId());
+    public AuthorityType modifyMemberInfo(MemberAuthorityDto memberAuthorityDto) {
+        Member memberInfo = findByMemberId(memberAuthorityDto.getMemberId());
 
-        memberInfo.setMemberAuthority(AuthorityType.valueOf(memberAuthorityUpdateDto.getMemberAuthority()));
+        memberInfo.setMemberAuthority(memberAuthorityDto.getMemberAuthority());
         return memberInfo.getMemberAuthority();
     }
 

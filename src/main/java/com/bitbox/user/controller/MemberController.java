@@ -2,11 +2,11 @@ package com.bitbox.user.controller;
 
 import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.domain.Member;
-import com.bitbox.user.dto.MemberAuthorityUpdateDto;
 import com.bitbox.user.dto.MemberDto;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.service.response.MemberInfoResponse;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
+import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
 import io.github.bitbox.bitbox.dto.MemberCreditDto;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.RequiredArgsConstructor;
@@ -59,8 +59,8 @@ public class MemberController {
      * 회원 권한 수정(관리자)
      */
     @PatchMapping("/admin")
-    public ResponseEntity<AuthorityType> updateMemberInfo(@RequestBody MemberAuthorityUpdateDto memberAuthorityUpdateDto) {
-        return ResponseEntity.ok(memberService.modifyMemberInfo(memberAuthorityUpdateDto));
+    public ResponseEntity<AuthorityType> updateMemberInfo(@RequestBody MemberAuthorityDto memberAuthorityDto) {
+        return ResponseEntity.ok(memberService.modifyMemberInfo(memberAuthorityDto));
     }
 
     /**
