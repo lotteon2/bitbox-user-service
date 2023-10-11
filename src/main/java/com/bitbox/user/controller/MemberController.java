@@ -26,7 +26,7 @@ public class MemberController {
     /**
      * 회원가입
      */
-    @PostMapping("/signup")
+    @PostMapping("/signup") // TODO signup? 명시적이긴 한데 restfull 하지는 않는데?
     public ResponseEntity<String> registMemberInfo(@Valid @RequestBody MemberDto memberDto) {
         return ResponseEntity.ok(memberService.registMemberInfo(memberDto).getMemberId());
     }

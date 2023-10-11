@@ -4,7 +4,6 @@ import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.repository.MemberInfoRepository;
 import com.bitbox.user.service.response.MemberInfoResponse;
 import com.bitbox.user.domain.Member;
-import com.bitbox.user.dto.MemberAuthorityUpdateDto;
 import com.bitbox.user.dto.MemberDto;
 import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InSufficientCreditException;
@@ -25,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class MemberService {
     private final MemberInfoRepository memberInfoRepository;
 
@@ -44,8 +44,7 @@ public class MemberService {
             throw new DuplicationEmailException("ERROR100 - 중복 이메일 에러");
         }
 
-        Member result = memberInfoRepository.save(MemberDto.convertMemberDtoToMember(memberDto));
-        return result;
+        return memberInfoRepository.save(MemberDto.convertMemberDtoToMember(memberDto));
     }
 
     /**
@@ -69,10 +68,7 @@ public class MemberService {
      */
     public MemberInfoWithCountResponse getTraineeInfo(Long classId, Pageable paging) {
         Page<Member> traineeList = memberInfoRepository.findAllByClassIdOrderByMemberNickname(classId, paging);
-
-        long totalCount = memberInfoRepository.count();
-
-        return MemberInfoWithCountResponse.builder().memberInfoList(traineeList.getContent()).totalCount(totalCount).build();
+        return MemberInfoWithCountResponse.builder().memberInfoList(traineeList.getContent()).totalCount(memberInfoRepository.count()).build();
     }
 
     /**
