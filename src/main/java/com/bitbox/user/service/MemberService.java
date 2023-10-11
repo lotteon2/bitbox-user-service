@@ -36,7 +36,6 @@ public class MemberService {
      * @param memberDto
      * @return MemberInfoRepository
      */
-    @KafkaListener(topics = "${modifyTopic}")
     @Transactional
     public Member registMemberInfo(MemberDto memberDto) {
         // 회원 정보가 DB에 존재하는지 확인
@@ -44,7 +43,7 @@ public class MemberService {
             throw new DuplicationEmailException("ERROR100 - 중복 이메일 에러");
         }
 
-        Member result = memberInfoRepository.save(Member.convertMemberDtoToMember(memberDto));
+        Member result = memberInfoRepository.save(MemberDto.convertMemberDtoToMember(memberDto));
         return result;
     }
 
@@ -85,15 +84,21 @@ public class MemberService {
     public Member updateMemberInfo(String memberId, MemberUpdateDto memberUpdateDto) {
         Member memberInfo = findByMemberId(memberId);
 
-        return Member.convertMemberForUpdate(memberInfo, memberUpdateDto);
+        return MemberUpdateDto.convertMemberForUpdate(memberInfo, memberUpdateDto);
     }
 
+    /**
+     * 회원 권한 변경
+     * @param memberAuthorityUpdateDto
+     * @return
+     */
+    @KafkaListener(topics = "${modifyTopic}")
     @Transactional
-    public Member modifyMemberInfo(MemberAuthorityUpdateDto memberUpdateDto) {
-        Member memberInfo = findByMemberId(memberUpdateDto.getMemberId());
+    public AuthorityType modifyMemberInfo(MemberAuthorityUpdateDto memberAuthorityUpdateDto) {
+        Member memberInfo = findByMemberId(memberAuthorityUpdateDto.getMemberId());
 
-        memberInfo.setMemberAuthority(AuthorityType.valueOf(memberUpdateDto.getMemberAuthority()));
-        return memberInfo;
+        memberInfo.setMemberAuthority(AuthorityType.valueOf(memberAuthorityUpdateDto.getMemberAuthority()));
+        return memberInfo.getMemberAuthority();
     }
 
     /**
@@ -152,8 +157,14 @@ public class MemberService {
     public long addCredit(MemberPaymentDto memberPaymentDto) {
         Member memberInfo = memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberPaymentDto.getMemberId()).orElseThrow(() -> new InvalidMemberIdException("ERROR101 - 존재하지 않는 회원정보"));
 
-        memberInfo.setMemberCredit(memberInfo.getMemberCredit() + memberPaymentDto.getMemberCredit());
+        try {
+            memberInfo.setMemberCredit(memberInfo.getMemberCredit() + memberPaymentDto.getMemberCredit());
+        } catch (Exception e) {
+            // kakaopayCancelTopic Send
+        }
+
         return memberInfo.getMemberCredit();
     }
+
 
 }

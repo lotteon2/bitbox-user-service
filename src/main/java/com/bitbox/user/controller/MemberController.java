@@ -56,11 +56,11 @@ public class MemberController {
     }
 
     /**
-     * 회원 정보 수정(관리자)
+     * 회원 권한 수정(관리자)
      */
     @PatchMapping("/admin")
     public ResponseEntity<AuthorityType> updateMemberInfo(@RequestBody MemberAuthorityUpdateDto memberAuthorityUpdateDto) {
-        return ResponseEntity.ok(memberService.modifyMemberInfo(memberAuthorityUpdateDto).getMemberAuthority());
+        return ResponseEntity.ok(memberService.modifyMemberInfo(memberAuthorityUpdateDto));
     }
 
     /**

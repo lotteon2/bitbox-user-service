@@ -73,21 +73,4 @@ public class Member {
     @Column(name = "deleted", nullable = false, columnDefinition = "TINYINT(1)")
     private boolean deleted;
 
-    public static Member convertMemberDtoToMember(MemberDto memberDto) {
-        return Member.builder()
-                .memberNickname(memberDto.getMemberNickname())
-                .memberEmail(memberDto.getMemberEmail())
-                .memberProfileImg(memberDto.getMemberProfileImg())
-                .memberAuthority(AuthorityType.valueOf(memberDto.getMemberAuthority()))
-                .build();
-    }
-
-    public static Member convertMemberForUpdate(Member original, MemberUpdateDto update) {
-        if (update.getMemberNickname() != null) original.setMemberNickname(update.getMemberNickname());
-        if (update.getMemberProfileImg() != null) original.setMemberProfileImg(update.getMemberProfileImg());
-
-        return original;
-    }
-
-
 }

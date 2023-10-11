@@ -98,7 +98,7 @@ public class MemberServiceTest {
     @Test
     void widthdrawTest() {
         MemberAuthorityUpdateDto memberInfo = MemberAuthorityUpdateDto.builder().memberId(member.getMemberId()).memberAuthority("GENERAL").build();
-        AuthorityType result = memberService.modifyMemberInfo(memberInfo).getMemberAuthority();
+        AuthorityType result = memberService.modifyMemberInfo(memberInfo);
 
         assertThat(result).isEqualTo(AuthorityType.GENERAL);
     }
