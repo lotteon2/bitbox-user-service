@@ -10,22 +10,15 @@ import com.bixbox.user.exception.InvalidMemberIdException;
 import com.bixbox.user.repository.MemberInfoRepository;
 import com.bixbox.user.service.response.MemberInfoResponse;
 import com.bixbox.user.service.response.MemberInfoWithCountResponse;
-import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
 import io.github.bitbox.bitbox.dto.MemberCreditDto;
 import io.github.bitbox.bitbox.dto.MemberPaymentDto;
-import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor

@@ -1,10 +1,8 @@
 package com.bixbox.user.domain;
 
 import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.mapping.Join;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "reason_statement")

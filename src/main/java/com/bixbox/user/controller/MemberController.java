@@ -12,7 +12,6 @@ import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

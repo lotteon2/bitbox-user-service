@@ -2,7 +2,6 @@ package com.bixbox.user.service.response;
 
 import com.bixbox.user.domain.Member;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

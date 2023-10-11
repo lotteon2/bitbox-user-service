@@ -1,6 +1,5 @@
 package com.bixbox.user.domain;
 
-import com.bixbox.user.dto.MemberAuthorityUpdateDto;
 import com.bixbox.user.dto.MemberDto;
 import com.bixbox.user.dto.MemberUpdateDto;
 import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
@@ -15,8 +14,6 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

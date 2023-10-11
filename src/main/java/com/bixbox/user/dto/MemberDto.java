@@ -1,6 +1,5 @@
 package com.bixbox.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.Builder;
 import lombok.Getter;
