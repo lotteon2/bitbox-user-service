@@ -3,6 +3,7 @@ package com.bixbox.user.service.response;
 import com.bixbox.user.domain.Member;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -15,8 +16,8 @@ public class MemberInfoResponse {
     private String memberNickname;
     private String memberEmail;
     private String memberProfileImg;
-    private String memberAuthority;
-    private int memberCredit;
+    private AuthorityType memberAuthority;
+    private long memberCredit;
 
     public static MemberInfoResponse convertMemberToMemberInfoResponse(Member memberInfo) {
         return MemberInfoResponse.builder().memberNickname(memberInfo.getMemberNickname())

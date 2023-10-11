@@ -1,6 +1,10 @@
 package com.bixbox.user.domain;
 
+import com.bixbox.user.dto.MemberAuthorityUpdateDto;
 import com.bixbox.user.dto.MemberDto;
+import com.bixbox.user.dto.MemberUpdateDto;
+import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
+import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
@@ -8,6 +12,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.transaction.Transactional;
@@ -24,6 +29,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Member {
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -51,10 +57,10 @@ public class Member {
 
     @ColumnDefault("0")
     @Column(name = "member_credit", nullable = false)
-    private int memberCredit;
+    private long memberCredit;
 
     @Column(name = "member_authority", nullable = false)
-    private String memberAuthority;
+    private AuthorityType memberAuthority;
 
     @CreatedDate
     @ColumnDefault("now()")
@@ -70,6 +76,15 @@ public class Member {
     @Column(name = "deleted", nullable = false, columnDefinition = "TINYINT(1)")
     private boolean deleted;
 
+    public static Member testMember(MemberAuthorityDto memberDto) {
+        return Member.builder()
+                .memberEmail("test@naver.com")
+                .memberNickname("test")
+                .memberProfileImg("test.jpg")
+                .memberId(memberDto.getMemberId())
+                .memberAuthority(memberDto.getMemberAuthority())
+                .build();
+    }
     public static Member convertMemberDtoToMember(MemberDto memberDto) {
         return Member.builder()
                 .memberNickname(memberDto.getMemberNickname())
@@ -78,5 +93,13 @@ public class Member {
                 .memberAuthority(memberDto.getMemberAuthority())
                 .build();
     }
+
+    public static Member convertMemberForUpdate(Member original, MemberUpdateDto update) {
+        if (update.getMemberNickname() != null) original.setMemberNickname(update.getMemberNickname());
+        if (update.getMemberProfileImg() != null) original.setMemberProfileImg(update.getMemberProfileImg());
+
+        return original;
+    }
+
 
 }

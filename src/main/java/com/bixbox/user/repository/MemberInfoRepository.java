@@ -1,11 +1,15 @@
 package com.bixbox.user.repository;
 
 import com.bixbox.user.domain.Member;
+import com.bixbox.user.dto.MemberUpdateDto;
 import com.bixbox.user.service.response.MemberInfoResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
+import java.util.Optional;
 
 
 public interface MemberInfoRepository extends CrudRepository<Member, String> {
@@ -23,7 +27,7 @@ public interface MemberInfoRepository extends CrudRepository<Member, String> {
      * @param memberId
      * @return MemberInfoResponse
      */
-    Member findByMemberIdAndDeletedIsFalse(String memberId);
+    Optional<Member> findByMemberIdAndDeletedIsFalse(String memberId);
 
 
     /**
@@ -32,5 +36,7 @@ public interface MemberInfoRepository extends CrudRepository<Member, String> {
      * @return MemberInfoResponse
      */
     Page<Member> findAllByClassIdOrderByMemberNickname(Long classId, Pageable paging);
+
+//    List<Member> findAllAndDeletedIsFalse();
 
 }
