@@ -6,15 +6,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Builder
 @Getter
 public class AttendanceUpdateDto {
-    @NotEmpty(message = "필수 입력값입니다")
+    @NotNull(message = "필수 입력값입니다")
     private Long attendanceId;
-    @NotEmpty(message = "필수 입력값입니다")
-    private String memberId;
-    @NotEmpty(message = "필수 입력값입니다")
-    private AttendanceStatus attendanceStatus;
-    private String attendancceModifyReason;
+    @NotNull(message = "필수 입력값입니다")
+    private AttendanceStatus attendanceState;
+    private String attendanceModifyReason;
 }

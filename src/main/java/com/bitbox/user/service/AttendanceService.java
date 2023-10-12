@@ -31,6 +31,11 @@ public class AttendanceService {
     private final double BIT_CENTER_LAT = 37.4946;
     private final double BIT_CENTER_LNG = 127.0276;
 
+    private final LocalTime BEFORE_ATTENDANCE_TIME_ENTRACE = LocalTime.of(7, 0, 0);
+    private final LocalTime ATTENDANCE_TIME_ENTRACE = LocalTime.of(9, 0,0);
+    private final LocalTime ATTENDANCE_TIME_VALID = LocalTime.of(14, 0, 0);
+    private final LocalTime ATTENDANCE_TIME_QUIT = LocalTime.of(18, 0, 0);
+
     private Attendance getAttendance(Long attendanceId, CurrentLocationDto currentLocationDto) {
         Attendance attendance = attendanceRepository.findById(attendanceId).orElseThrow(() -> new InvalidAttendanceException("존재하지 않는 출결정보입니다."));
         double lat = currentLocationDto.getLat();
@@ -38,7 +43,7 @@ public class AttendanceService {
 
         // 반경 100M 이내
         if (Math.pow(0.001, 2) <= (Math.pow(BIT_CENTER_LAT - lat, 2) + Math.pow(BIT_CENTER_LNG - lng, 2))) {
-            throw new InvalidRangeAttendanceException("ERROR121 - 교육장과 멀리 떨어져 있습니다");
+            throw new InvalidRangeAttendanceException("교육장과 멀리 떨어져 있습니다.");
         }
         return attendance;
     }
@@ -50,9 +55,23 @@ public class AttendanceService {
      * @param currentLocationDto
      */
     @Transactional
-    public void memberEntrance(Long attendanceId, CurrentLocationDto currentLocationDto) {
+    public AttendanceStatus memberEntrance(Long attendanceId, CurrentLocationDto currentLocationDto) {
+        LocalTime current;
+        if (currentLocationDto.getCurrent() == null) current = LocalTime.now();
+        else current = LocalTime.of(Integer.parseInt(currentLocationDto.getCurrent().split(":")[0]), Integer.parseInt(currentLocationDto.getCurrent().split(":")[1]), Integer.parseInt(currentLocationDto.getCurrent().split(":")[2]));
+
         Attendance attendance = getAttendance(attendanceId, currentLocationDto);
-        attendance.setEntraceTime(LocalTime.now());
+        attendance.setEntraceTime(current);
+
+        if ((current.isAfter(BEFORE_ATTENDANCE_TIME_ENTRACE) && current.isBefore(ATTENDANCE_TIME_ENTRACE)) || current.equals(ATTENDANCE_TIME_ENTRACE)) { // 출석
+            attendance.setAttendanceState(AttendanceStatus.ATTENDANCE);
+        } else if(current.isAfter(ATTENDANCE_TIME_ENTRACE)) { // 입실 시간보다 늦게 입실체크한 경우 지각
+            attendance.setAttendanceState(AttendanceStatus.TARDY);
+        } else if(current.isAfter(ATTENDANCE_TIME_VALID)) {
+
+        }
+
+        return attendance.getAttendanceState();
     }
 
     /**
@@ -62,8 +81,16 @@ public class AttendanceService {
      */
     @Transactional
     public void memberQuit(Long attendanceId, CurrentLocationDto currentLocationDto) {
+        LocalTime current;
+        if (currentLocationDto.getCurrent() == null) current = LocalTime.now();
+        else current = LocalTime.of(Integer.parseInt(currentLocationDto.getCurrent().split(":")[0]), Integer.parseInt(currentLocationDto.getCurrent().split(":")[1]), Integer.parseInt(currentLocationDto.getCurrent().split(":")[2]));
+
         Attendance attendance = getAttendance(attendanceId, currentLocationDto);
-        attendance.setQuitTime(LocalTime.now());
+        attendance.setQuitTime(current);
+
+        if (attendance.getAttendanceState() == AttendanceStatus.ATTENDANCE && current.isBefore(ATTENDANCE_TIME_QUIT)) { // 현재 출석 상태에서 퇴실 시간보다 일찍 퇴실체크한 경우 조퇴
+            attendance.setAttendanceState(AttendanceStatus.GO_OUT);
+        }
     }
 
     /**
@@ -90,11 +117,13 @@ public class AttendanceService {
      * @param attendanceUpdateDto
      * @return
      */
-    public AttendanceStatus updateAttendancceState(AttendanceUpdateDto attendanceUpdateDto) {
+    @Transactional
+    public AttendanceStatus updateAttendanceState(AttendanceUpdateDto attendanceUpdateDto) {
         Attendance attendance = attendanceRepository.findByAttendanceId(attendanceUpdateDto.getAttendanceId());
 
-        attendance.setAttendanceState(attendanceUpdateDto.getAttendanceStatus());
-        attendance.setAttendanceModifyReason(attendanceUpdateDto.getAttendancceModifyReason());
+        attendance.setAttendanceState(attendanceUpdateDto.getAttendanceState());
+        attendance.setAttendanceModifyReason(attendanceUpdateDto.getAttendanceModifyReason());
+
         return attendanceRepository.save(attendance).getAttendanceState();
     }
 }

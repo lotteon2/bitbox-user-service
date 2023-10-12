@@ -3,7 +3,6 @@ package com.bitbox.user.domain.member.service;
 import com.bitbox.user.dto.MemberDto;
 import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.service.MemberService;
-import com.bitbox.user.service.response.MemberInfoResponse;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InvalidMemberIdException;

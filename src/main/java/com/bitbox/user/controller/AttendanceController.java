@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import javax.ws.rs.PathParam;
 import java.util.List;
 
@@ -19,13 +20,12 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
 
     @PatchMapping("/mypage/attendance/entrance/{attendanceId}")
-    public ResponseEntity<Void> memberEntrance(@PathVariable Long attendanceId, @RequestBody CurrentLocationDto currentLocationDto) {
-        attendanceService.memberEntrance(attendanceId, currentLocationDto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AttendanceStatus> memberEntrance(@PathVariable Long attendanceId, @Valid @RequestBody CurrentLocationDto currentLocationDto) {
+        return ResponseEntity.ok(attendanceService.memberEntrance(attendanceId, currentLocationDto));
     }
 
     @PatchMapping("/mypage/attendance/quit/{attendanceId}")
-    public ResponseEntity<Void> memberQuit(@PathVariable Long attendanceId, @RequestBody CurrentLocationDto currentLocationDto) {
+    public ResponseEntity<Void> memberQuit(@PathVariable Long attendanceId, @Valid @RequestBody CurrentLocationDto currentLocationDto) {
         attendanceService.memberQuit(attendanceId, currentLocationDto);
         return ResponseEntity.ok().build();
     }
@@ -41,7 +41,7 @@ public class AttendanceController {
     }
 
     @PatchMapping("/admin/attendance")
-    public ResponseEntity<AttendanceStatus> updateAttendancceState(@RequestBody AttendanceUpdateDto attendanceUpdateDto) {
-        return ResponseEntity.ok(attendanceService.updateAttendancceState(attendanceUpdateDto));
+    public ResponseEntity<AttendanceStatus> updateAttendanceState(@Valid @RequestBody AttendanceUpdateDto attendanceUpdateDto) {
+        return ResponseEntity.ok(attendanceService.updateAttendanceState(attendanceUpdateDto));
     }
 }

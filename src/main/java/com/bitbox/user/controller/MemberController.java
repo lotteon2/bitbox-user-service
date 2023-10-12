@@ -54,7 +54,7 @@ public class MemberController {
      * 내 정보 수정
      */
     @PatchMapping("/mypage")
-    public ResponseEntity<Member> updateMemberInfo(@RequestHeader String memberId, @RequestBody MemberUpdateDto memberUpdateDto) {
+    public ResponseEntity<Member> updateMemberInfo(@RequestHeader String memberId, @Valid @RequestBody MemberUpdateDto memberUpdateDto) {
         return ResponseEntity.ok(memberService.updateMemberInfo(memberId, memberUpdateDto));
     }
 
@@ -62,7 +62,7 @@ public class MemberController {
      * 회원 권한 수정(관리자)
      */
     @PatchMapping("/admin")
-    public ResponseEntity<AuthorityType> updateMemberInfo(@RequestBody MemberAuthorityDto memberAuthorityDto) {
+    public ResponseEntity<AuthorityType> updateMemberInfo(@Valid @RequestBody MemberAuthorityDto memberAuthorityDto) {
         return ResponseEntity.ok(memberService.modifyMemberInfo(memberAuthorityDto));
     }
 
@@ -79,7 +79,7 @@ public class MemberController {
      * 크레딧 소모
      */
     @PatchMapping("/credit")
-    public ResponseEntity<Long> useMyCredit(@RequestBody MemberCreditDto memberCreditDto) {
+    public ResponseEntity<Long> useMyCredit(@Valid @RequestBody MemberCreditDto memberCreditDto) {
         return ResponseEntity.ok(memberService.useMyCredit(memberCreditDto));
     }
 
