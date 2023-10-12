@@ -28,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
     private final MemberInfoRepository memberInfoRepository;
 
-    public Member findByMemberId(String memberId) {
+    private Member findByMemberId(String memberId) {
         return memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberId).orElseThrow(() -> new InvalidMemberIdException("ERROR101 - 존재하지 않는 회원정보"));
     }
 

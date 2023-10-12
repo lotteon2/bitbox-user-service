@@ -1,8 +1,10 @@
 package com.bitbox.user.controller;
 
+import brave.Response;
 import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.dto.MemberDto;
+import com.bitbox.user.repository.MemberInfoRepository;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.service.response.MemberInfoResponse;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
@@ -23,10 +25,14 @@ import javax.validation.Valid;
 public class MemberController {
     private final MemberService memberService;
 
+    @GetMapping("")
+    public ResponseEntity<MemberInfoResponse> getAll() {
+        return ResponseEntity.ok(memberService.getMyInfo("4e5ccba9-5512-46e4-8095-eaffc42a633b"));
+    }
     /**
      * 회원가입
      */
-    @PostMapping("/signup") // TODO signup? 명시적이긴 한데 restfull 하지는 않는데?
+    @PostMapping("/signup")
     public ResponseEntity<String> registMemberInfo(@Valid @RequestBody MemberDto memberDto) {
         return ResponseEntity.ok(memberService.registMemberInfo(memberDto).getMemberId());
     }

@@ -20,7 +20,7 @@ public class AttendanceService {
     private final double BIT_CENTER_LAT = 37.4946;
     private final double BIT_CENTER_LNG = 127.0276;
 
-    @Transactional // [TODO] Transactional 관련 설명이 필요할듯..
+    @Transactional
     public void memberEntrance(Long attendanceId, CurrentLocationDto currentLocationDto) {
         Attendance attendance = getAttendance(attendanceId, currentLocationDto);
         attendance.setEntraceTime(LocalTime.now());
@@ -38,7 +38,7 @@ public class AttendanceService {
         double lng = currentLocationDto.getLng();
 
         // 반경 100M 이내
-        if (Math.pow(0.001, 2) < (Math.pow(BIT_CENTER_LAT - lat, 2) + Math.pow(BIT_CENTER_LNG - lng, 2))) {
+        if (Math.pow(0.001, 2) <= (Math.pow(BIT_CENTER_LAT - lat, 2) + Math.pow(BIT_CENTER_LNG - lng, 2))) {
             throw new InvalidRangeAttendanceException("ERROR121 - 교육장과 멀리 떨어져 있습니다");
         }
         return attendance;

@@ -8,9 +8,7 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class MemberInfoWithCountResponse {
     private List<Member> memberInfoList;
-    @JsonProperty("total_count") // TODO 이건 왜 안뗄까 친구야?
     private long totalCount;
 }

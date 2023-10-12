@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY) // TODO 이거 떼도 돌아가지 않나?
 public class MemberInfoResponse {
     private String memberNickname;
     private String memberEmail;

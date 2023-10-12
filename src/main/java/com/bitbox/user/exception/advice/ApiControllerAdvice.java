@@ -52,7 +52,7 @@ public class ApiControllerAdvice {
      */
     @ExceptionHandler(InvalidRangeAttendanceException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInvalidRangeAttendanceException(InvalidAttendanceException e) {
+    public ErrorResponse handleInvalidRangeAttendanceException(InvalidRangeAttendanceException e) {
         return getErrorResponse(e);
     }
 
