@@ -1,7 +1,6 @@
 package com.bitbox.user.service.response;
 
 import com.bitbox.user.domain.Member;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,6 +18,7 @@ public class MemberInfoResponse {
     private AuthorityType memberAuthority;
     private long memberCredit;
 
+    // [TODO] 왜 안쓰지?
     public static MemberInfoResponse convertMemberToMemberInfoResponse(Member memberInfo) {
         return MemberInfoResponse.builder().memberNickname(memberInfo.getMemberNickname())
                 .memberEmail(memberInfo.getMemberEmail())

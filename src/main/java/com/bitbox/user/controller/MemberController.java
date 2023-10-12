@@ -3,7 +3,6 @@ import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.dto.MemberDto;
 import com.bitbox.user.service.MemberService;
-import com.bitbox.user.service.response.MemberInfoResponse;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
 import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
 import io.github.bitbox.bitbox.dto.MemberCreditDto;
@@ -19,12 +18,13 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
+@CrossOrigin("*") // [TODO] 일단 컨트롤러에 붙이기는 했는데 확인 필요.
 public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("")
     public ResponseEntity<Member> getAll() {
-        return ResponseEntity.ok(memberService.getMyInfo("4e5ccba9-5512-46e4-8095-eaffc42a633b"));
+        return ResponseEntity.ok(memberService.getMyInfo("4e5ccba9-5512-46e4-8095-eaffc42a633b")); // [TODO] 뭐야 이 프리픽스는?
     }
     /**
      * 회원가입
@@ -79,7 +79,7 @@ public class MemberController {
      * 크레딧 소모
      */
     @PatchMapping("/credit")
-    public ResponseEntity<Long> useMyCredit(@Valid @RequestBody MemberCreditDto memberCreditDto) {
+    public ResponseEntity<Long> useMyCredit(@Valid @RequestBody MemberCreditDto memberCreditDto) { // [TODO] 나 여기다가 체크하는 어노테이션이 없는데 왠 Valid?
         return ResponseEntity.ok(memberService.useMyCredit(memberCreditDto));
     }
 

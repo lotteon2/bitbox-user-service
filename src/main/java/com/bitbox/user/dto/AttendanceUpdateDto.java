@@ -1,11 +1,9 @@
 package com.bitbox.user.dto;
 
-import com.bitbox.user.domain.Attendance;
 import io.github.bitbox.bitbox.enums.AttendanceStatus;
 import lombok.Builder;
 import lombok.Getter;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Builder

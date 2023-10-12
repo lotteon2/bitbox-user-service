@@ -17,7 +17,7 @@ public class MemberDto {
     private String memberEmail;
     private String memberProfileImg;
     @NotEmpty(message = "필수 입력값입니다")
-    private String memberAuthority;
+    private AuthorityType memberAuthority;
     private Long classId;
 
     public static Member convertMemberDtoToMember(MemberDto memberDto) {
@@ -25,7 +25,7 @@ public class MemberDto {
                 .memberNickname(memberDto.getMemberNickname())
                 .memberEmail(memberDto.getMemberEmail())
                 .memberProfileImg(memberDto.getMemberProfileImg())
-                .memberAuthority(AuthorityType.valueOf(memberDto.getMemberAuthority()))
+                .memberAuthority(memberDto.getMemberAuthority())
                 .classId(memberDto.getClassId())
                 .build();
     }

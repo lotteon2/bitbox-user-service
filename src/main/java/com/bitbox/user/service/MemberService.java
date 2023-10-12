@@ -1,13 +1,12 @@
 package com.bitbox.user.service;
 
-import com.bitbox.user.dto.MemberUpdateDto;
-import com.bitbox.user.repository.MemberInfoRepository;
-import com.bitbox.user.service.response.MemberInfoResponse;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.dto.MemberDto;
+import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InSufficientCreditException;
 import com.bitbox.user.exception.InvalidMemberIdException;
+import com.bitbox.user.repository.MemberInfoRepository;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
 import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
 import io.github.bitbox.bitbox.dto.MemberCreditDto;
@@ -20,12 +19,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@CrossOrigin("*")
+@Transactional(readOnly = true)
 public class MemberService {
     private final MemberInfoRepository memberInfoRepository;
 

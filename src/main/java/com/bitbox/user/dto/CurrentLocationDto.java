@@ -3,9 +3,7 @@ package com.bitbox.user.dto;
 import lombok.Builder;
 import lombok.Getter;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.LocalTime;
 
 @Builder
 @Getter

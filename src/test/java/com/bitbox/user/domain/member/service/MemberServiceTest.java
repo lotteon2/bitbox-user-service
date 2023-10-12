@@ -6,6 +6,7 @@ import com.bitbox.user.service.MemberService;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InvalidMemberIdException;
+import io.github.bitbox.bitbox.enums.AuthorityType;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +30,7 @@ public class MemberServiceTest {
                 .memberNickname("김정윤")
                 .memberEmail("indl1670@naver.com")
                 .memberProfileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
-                .memberAuthority("TRAINEE")
+                .memberAuthority(AuthorityType.TRAINEE)
                 .build();
 
         member =  memberService.registMemberInfo(memberDto);
@@ -39,9 +40,23 @@ public class MemberServiceTest {
     @Order(1)
     @Test
     public void createMember() {
-       //TODO: 등록 값과 결과값 비교
-        // 값 전체 비교
+        String testEmail = "test@naver.com";
+        String testNickName = "test";
+        AuthorityType testAuthorityType = AuthorityType.TRAINEE;
 
+
+        Member test = memberService.registMemberInfo(MemberDto.builder()
+                .memberAuthority(testAuthorityType)
+                .memberEmail(testEmail)
+                .memberNickname(testNickName)
+                .build());
+
+        Member myInfo = memberService.getMyInfo(test.getMemberId());
+
+        Assertions.assertEquals(myInfo.getMemberAuthority(),testAuthorityType);
+        Assertions.assertEquals(myInfo.getMemberEmail(),testEmail);
+        Assertions.assertEquals(myInfo.getMemberAuthority(),testAuthorityType);
+        // [TODO] 디폴트 값 추가?
     }
 
     @DisplayName("회원 등록 시 이미 등록된 이메일일 경우 예외가 발생한다.")
@@ -50,7 +65,7 @@ public class MemberServiceTest {
     public void createMemberDuplicationEmail() throws DuplicationEmailException {
         assertThatThrownBy(() -> memberService.registMemberInfo(memberDto))
                 .isInstanceOf(DuplicationEmailException.class)
-                .hasMessage("이미 존재하는 계정입니다. 이메일을 확인해주세요");
+                .hasMessage("이미 존재하는 계정입니다. 이메일을 확인해주세요.");
 
     }
 
