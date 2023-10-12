@@ -24,6 +24,7 @@ public class ReasonStatement {
     @JoinColumn(name = "attendance_id", nullable = false)
     private Attendance attendance;
 
+    @JsonIgnore
     @OneToOne(mappedBy = "reasonStatement", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private RejectReason rejectReason;
 
@@ -40,5 +41,5 @@ public class ReasonStatement {
     private boolean reasonState;
 
     @Column(name = "is_read", nullable = false)
-    private boolean isRead;
+    private boolean read;
 }

@@ -13,15 +13,21 @@ import java.time.LocalTime;
 @Entity
 @Getter
 @Setter
-@Table(name="attendance")
+@Table(name = "attendance", uniqueConstraints = { @UniqueConstraint(columnNames = { "member_id", "attendance_date" }) })
 @DynamicInsert
 @DynamicUpdate
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@SequenceGenerator(
+        name = "ATTENDANCE_SEQ_GENERATOR",
+        sequenceName = "ATTENDANCE_SEQ", // 매핑할 데이터베이스 시퀀스 이름
+        initialValue = 1,
+        allocationSize = 50)
+
 public class Attendance {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "ATTENDANCE_SEQ_GENERATOR")
     @Column(name = "attendance_id")
     private Long attendanceId;
 
@@ -39,9 +45,10 @@ public class Attendance {
     @Column(name = "quit_time")
     private LocalTime quitTime;
 
-    @Column(name = "attendance_state", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "attendance_state", nullable = false, columnDefinition = "varchar(255) default 'ABSENT'")
     private AttendanceStatus attendanceState;
 
-    @Column(name = "attendance_modify_reason")
+    @Column(name = "attendance_modify_reason", columnDefinition = "text")
     private String attendanceModifyReason;
 }
