@@ -4,10 +4,12 @@ import com.bitbox.user.domain.Member;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.util.List;
 
 @Builder
+@Getter
 public class MemberInfoWithCountResponse {
     private List<Member> memberInfoList;
     private long totalCount;

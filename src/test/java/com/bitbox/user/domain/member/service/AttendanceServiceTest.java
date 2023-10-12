@@ -15,9 +15,10 @@ import java.time.LocalDate;
 public class AttendanceServiceTest {
     @Autowired
     private AttendanceService attendanceService;
+    @Autowired MemberService memberService;
 
     @BeforeEach
     public void before() {
-//        Attendance attendance = Attendance.builder().attendanceDate(LocalDate.now()).
+        Attendance attendance = Attendance.builder().attendanceDate(LocalDate.now()).member(memberService.getMyInfo("4e5ccba9-5512-46e4-8095-eaffc42a633b")).build();
     }
 }

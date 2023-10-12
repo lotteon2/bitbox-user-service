@@ -20,16 +20,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
+@CrossOrigin("*")
 public class MemberService {
     private final MemberInfoRepository memberInfoRepository;
 
     private Member findByMemberId(String memberId) {
-        return memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberId).orElseThrow(() -> new InvalidMemberIdException("ERROR101 - 존재하지 않는 회원정보"));
+        return memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberId).orElseThrow(() -> new InvalidMemberIdException("존재하지 않거나 유효하지 않은 회원정보입니다."));
     }
 
     /**
@@ -41,7 +42,7 @@ public class MemberService {
     public Member registMemberInfo(MemberDto memberDto) {
         // 회원 정보가 DB에 존재하는지 확인
         if (memberInfoRepository.countByMemberEmailAndDeletedIsFalse(memberDto.getMemberEmail()) != 0) {
-            throw new DuplicationEmailException("ERROR100 - 중복 이메일 에러");
+            throw new DuplicationEmailException("이미 존재하는 계정입니다. 이메일을 확인해주세요.");
         }
 
         return memberInfoRepository.save(MemberDto.convertMemberDtoToMember(memberDto));
@@ -53,10 +54,8 @@ public class MemberService {
      * @param memberId
      * @return MemberInfoResponse
      */
-    public MemberInfoResponse getMyInfo(String memberId) {
-        Member memberInfo = findByMemberId(memberId);
-
-        return MemberInfoResponse.convertMemberToMemberInfoResponse(memberInfo);
+    public Member getMyInfo(String memberId) {
+        return findByMemberId(memberId);
     }
 
     /**
@@ -124,7 +123,7 @@ public class MemberService {
         long remainCredit = memberInfo.getMemberCredit() - memberCreditDto.getCredit();
 
         if (remainCredit < 0) {
-            throw new InSufficientCreditException("ERROR110 - 크레딧 부족");
+            throw new InSufficientCreditException("크레딧이 부족합니다. 충전 후 이용해주세요.");
         }
 
         memberInfo.setMemberCredit(memberInfo.getMemberCredit() - memberCreditDto.getCredit());
@@ -152,7 +151,7 @@ public class MemberService {
     @KafkaListener(topics = "${kakaoTopic}")
     @Transactional
     public long addCredit(MemberPaymentDto memberPaymentDto) {
-        Member memberInfo = memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberPaymentDto.getMemberId()).orElseThrow(() -> new InvalidMemberIdException("ERROR101 - 존재하지 않는 회원정보"));
+        Member memberInfo = findByMemberId(memberPaymentDto.getMemberId());
 
         try {
             memberInfo.setMemberCredit(memberInfo.getMemberCredit() + memberPaymentDto.getMemberCredit());

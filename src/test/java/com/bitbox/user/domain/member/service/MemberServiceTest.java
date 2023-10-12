@@ -51,7 +51,7 @@ public class MemberServiceTest {
     public void createMemberDuplicationEmail() throws DuplicationEmailException {
         assertThatThrownBy(() -> memberService.registMemberInfo(memberDto))
                 .isInstanceOf(DuplicationEmailException.class)
-                .hasMessage("ERROR100 - 중복 이메일 에러");
+                .hasMessage("이미 존재하는 계정입니다. 이메일을 확인해주세요");
 
     }
 
@@ -59,7 +59,7 @@ public class MemberServiceTest {
     @Order(3)
     @Test
     void getMyInfo() {
-        MemberInfoResponse memberInfo = memberService.getMyInfo(member.getMemberId());
+        Member memberInfo = memberService.getMyInfo(member.getMemberId());
         assertThat(memberInfo).isNotNull();
     }
 
@@ -69,7 +69,7 @@ public class MemberServiceTest {
     void getMyInfoInvalidMemberId() {
         assertThatThrownBy(() -> memberService.getMyInfo("a"))
                 .isInstanceOf(InvalidMemberIdException.class)
-                .hasMessage("ERROR101 - 존재하지 않는 회원정보");
+                .hasMessage("존재하지 않거나 유효하지 않은 회원정보입니다.");
     }
 
     @DisplayName("사용자 정보를 입력받아 해당하는 값만 수정한다.")

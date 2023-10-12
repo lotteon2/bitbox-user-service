@@ -1,5 +1,6 @@
 package com.bitbox.user.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.*;
@@ -13,10 +14,12 @@ public class ReasonStatement {
     @Column(name = "reason_statement_id")
     private Long reasonStatementId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attendance_id", nullable = false)
     private Attendance attendance;

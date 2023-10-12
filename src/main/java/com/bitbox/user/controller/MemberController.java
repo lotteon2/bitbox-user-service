@@ -1,10 +1,7 @@
 package com.bitbox.user.controller;
-
-import brave.Response;
 import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.dto.MemberDto;
-import com.bitbox.user.repository.MemberInfoRepository;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.service.response.MemberInfoResponse;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
@@ -26,7 +23,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("")
-    public ResponseEntity<MemberInfoResponse> getAll() {
+    public ResponseEntity<Member> getAll() {
         return ResponseEntity.ok(memberService.getMyInfo("4e5ccba9-5512-46e4-8095-eaffc42a633b"));
     }
     /**
@@ -41,7 +38,7 @@ public class MemberController {
      * 회원정보 조회(일반 회원)
      */
     @GetMapping("/mypage")
-    public ResponseEntity<MemberInfoResponse> getMyInfo(@RequestHeader String memberId) {
+    public ResponseEntity<Member> getMyInfo(@RequestHeader String memberId) {
         return ResponseEntity.ok(memberService.getMyInfo(memberId));
     }
 

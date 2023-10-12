@@ -2,6 +2,7 @@ package com.bitbox.user.domain;
 
 import com.bitbox.user.dto.MemberDto;
 import com.bitbox.user.dto.MemberUpdateDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -33,9 +34,11 @@ public class Member {
     @Column(name="member_id")
     private String memberId;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Attendance> attendances;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ReasonStatement> reasonStatements;
 

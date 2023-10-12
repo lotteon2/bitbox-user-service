@@ -1,5 +1,7 @@
 package com.bitbox.user.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.github.bitbox.bitbox.enums.AttendanceStatus;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -23,6 +25,7 @@ public class Attendance {
     @Column(name = "attendance_id")
     private Long attendanceId;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
@@ -37,7 +40,7 @@ public class Attendance {
     private LocalTime quitTime;
 
     @Column(name = "attendance_state", nullable = false)
-    private String attendanceState;
+    private AttendanceStatus attendanceState;
 
     @Column(name = "attendance_modify_reason")
     private String attendanceModifyReason;
