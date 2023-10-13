@@ -53,9 +53,25 @@ public class ApiControllerAdvice {
         return getErrorResponse(e);
     }
 
+    /**
+     * 부정 출결
+     * @param e
+     * @return
+     */
     @ExceptionHandler(InvalidAttendanceRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleInvalidAttendanceRequestException(InvalidAttendanceRequestException e) {
+        return getErrorResponse(e);
+    }
+
+    /**
+     * 크레딧 부족
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(InSufficientCreditException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInSufficientCreditException(InSufficientCreditException e) {
         return getErrorResponse(e);
     }
     private ErrorResponse getErrorResponse(RuntimeException e) {

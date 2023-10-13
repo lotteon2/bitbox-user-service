@@ -1,7 +1,6 @@
 package com.bitbox.user.service;
 
 import com.bitbox.user.domain.Member;
-import com.bitbox.user.dto.MemberDto;
 import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InSufficientCreditException;
@@ -11,12 +10,15 @@ import com.bitbox.user.service.response.MemberInfoWithCountResponse;
 import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
 import io.github.bitbox.bitbox.dto.MemberCreditDto;
 import io.github.bitbox.bitbox.dto.MemberPaymentDto;
+import io.github.bitbox.bitbox.dto.MemberRegisterDto;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class MemberService {
     private final MemberInfoRepository memberInfoRepository;
+    private final KafkaTemplate<String, MemberPaymentDto> kafkaTemplate;
+    @Value("${cancelTopic}")
+    private String cancelTopicName;
 
     private Member findByMemberId(String memberId) {
         return memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberId).orElseThrow(() -> new InvalidMemberIdException("존재하지 않거나 유효하지 않은 회원정보입니다."));
@@ -37,13 +42,22 @@ public class MemberService {
      * @return MemberInfoRepository
      */
     @Transactional
-    public Member registMemberInfo(MemberDto memberDto) {
+    public Member registMemberInfo(MemberRegisterDto memberDto) {
         // 회원 정보가 DB에 존재하는지 확인
-        if (memberInfoRepository.countByMemberEmailAndDeletedIsFalse(memberDto.getMemberEmail()) != 0) {
+        if (memberInfoRepository.countByMemberEmailAndDeletedIsFalse(memberDto.getEmail()) != 0) {
             throw new DuplicationEmailException("이미 존재하는 계정입니다. 이메일을 확인해주세요.");
         }
 
-        return memberInfoRepository.save(MemberDto.convertMemberDtoToMember(memberDto));
+        Member result = Member.builder()
+                .memberId(memberDto.getId())
+                .memberEmail(memberDto.getEmail())
+                .memberNickname(memberDto.getName())
+                .memberProfileImg(memberDto.getProfileImg())
+                .memberAuthority(memberDto.getAuthority())
+                .classId(memberDto.getClassId())
+                .build();
+
+        return memberInfoRepository.save(result);
     }
 
     /**
@@ -118,9 +132,7 @@ public class MemberService {
     public long useMyCredit(MemberCreditDto memberCreditDto) {
         Member memberInfo = findByMemberId(memberCreditDto.getMemberId());
 
-        long remainCredit = memberInfo.getMemberCredit() - memberCreditDto.getCredit();
-
-        if (remainCredit < 0) {
+        if ( memberInfo.getMemberCredit() - memberCreditDto.getCredit() < 0) {
             throw new InSufficientCreditException("크레딧이 부족합니다. 충전 후 이용해주세요.");
         }
 
@@ -129,7 +141,7 @@ public class MemberService {
     }
 
     /**
-     * 크레딧을 소모한 채팅 결제 실패 시 크레딧  되돌리기
+     * 크레딧을 소모한 채팅 결제 실패 시 크레딧 되돌리기
      * @param memberCreditDto
      * @return
      */
@@ -138,9 +150,15 @@ public class MemberService {
     public long getbackMyCredit(MemberCreditDto memberCreditDto) {
         Member memberInfo = findByMemberId(memberCreditDto.getMemberId());
 
-        memberInfo.setMemberCredit(memberInfo.getMemberCredit() + memberCreditDto.getCredit());
+        try {
+            memberInfo.setMemberCredit(memberInfo.getMemberCredit() + memberCreditDto.getCredit());
+        } catch (Exception e) {
+            log.error("userCreditModifyTopic Error" + memberCreditDto);
+        }
+
         return memberInfo.getMemberCredit();
     }
+
     /**
      * 크레딧 결제 후 크레딧 적립
      * @param memberPaymentDto
@@ -154,7 +172,9 @@ public class MemberService {
         try {
             memberInfo.setMemberCredit(memberInfo.getMemberCredit() + memberPaymentDto.getMemberCredit());
         } catch (Exception e) {
-            // kakaopayCancelTopic Send
+            log.error("kakaoMemberCreditTopic Error" + memberPaymentDto);
+            kafkaTemplate.send(cancelTopicName, memberPaymentDto);
+            throw e;
         }
 
         return memberInfo.getMemberCredit();

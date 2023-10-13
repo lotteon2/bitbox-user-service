@@ -26,3 +26,4 @@ spring:
 creditTopic: yun
 kakaoTopic: yun
 modifyTopic: yun
+cancelTopic: yun

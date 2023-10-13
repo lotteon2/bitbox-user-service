@@ -1,11 +1,11 @@
 package com.bitbox.user.domain.member.service;
 
-import com.bitbox.user.dto.MemberDto;
 import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InvalidMemberIdException;
+import io.github.bitbox.bitbox.dto.MemberRegisterDto;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,16 +21,16 @@ public class MemberServiceTest {
     @Autowired
     private MemberService memberService;
 
-    private MemberDto memberDto;
+    private MemberRegisterDto memberDto;
     private Member member;
 
     @BeforeEach
     public void before() {
-        memberDto = MemberDto.builder()
-                .memberNickname("김정윤")
-                .memberEmail("indl1670@naver.com")
-                .memberProfileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
-                .memberAuthority(AuthorityType.TRAINEE)
+        memberDto = MemberRegisterDto.builder()
+                .name("김정윤")
+                .email("indl1670@naver.com")
+                .profileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
+                .authority(AuthorityType.TRAINEE)
                 .build();
 
         member =  memberService.registMemberInfo(memberDto);
@@ -45,10 +45,10 @@ public class MemberServiceTest {
         AuthorityType testAuthorityType = AuthorityType.TRAINEE;
 
 
-        Member test = memberService.registMemberInfo(MemberDto.builder()
-                .memberAuthority(testAuthorityType)
-                .memberEmail(testEmail)
-                .memberNickname(testNickName)
+        Member test = memberService.registMemberInfo(MemberRegisterDto.builder()
+                .authority(testAuthorityType)
+                .email(testEmail)
+                .name(testNickName)
                 .build());
 
         Member myInfo = memberService.getMyInfo(test.getMemberId());

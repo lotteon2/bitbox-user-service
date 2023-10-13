@@ -4,7 +4,6 @@ import com.bitbox.user.domain.Attendance;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.dto.AttendanceUpdateDto;
 import com.bitbox.user.dto.CurrentLocationDto;
-import com.bitbox.user.dto.MemberDto;
 import com.bitbox.user.exception.InvalidAttendanceRequestException;
 import com.bitbox.user.exception.InvalidRangeAttendanceException;
 import com.bitbox.user.repository.AttendanceRepository;
@@ -12,6 +11,7 @@ import com.bitbox.user.service.AttendanceService;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.service.response.AvgAttendanceInfo;
 import com.bitbox.user.service.response.MemberInfoWithAttendance;
+import io.github.bitbox.bitbox.dto.MemberRegisterDto;
 import io.github.bitbox.bitbox.enums.AttendanceStatus;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,11 +42,11 @@ public class AttendanceServiceTest {
 
     @BeforeEach
     public void before() {
-        MemberDto memberDto = MemberDto.builder()
-                .memberNickname("김정윤")
-                .memberEmail("indl1670@naver.com")
-                .memberProfileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
-                .memberAuthority(AuthorityType.TRAINEE)
+        MemberRegisterDto memberDto = MemberRegisterDto.builder()
+                .name("김정윤")
+                .email("indl1670@naver.com")
+                .profileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
+                .authority(AuthorityType.TRAINEE)
                 .classId(1L)
                 .build();
         Member memberInfo = memberService.registMemberInfo(memberDto);
@@ -120,11 +120,11 @@ public class AttendanceServiceTest {
     @Order(6)
     @Test
     public void otherMemberEntrace() {
-        MemberDto memberDto = MemberDto.builder()
-                .memberNickname("테스트")
-                .memberEmail("test@naver.com")
-                .memberProfileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
-                .memberAuthority(AuthorityType.GENERAL)
+        MemberRegisterDto memberDto = MemberRegisterDto.builder()
+                .name("테스트")
+                .email("test@naver.com")
+                .profileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
+                .authority(AuthorityType.GENERAL)
                 .build();
         Member memberInfo = memberService.registMemberInfo(memberDto);
         String testMemberId = memberInfo.getMemberId();
@@ -228,11 +228,11 @@ public class AttendanceServiceTest {
     @Order(12)
     @Test
     public void otherMemberQuit() {
-        MemberDto memberDto = MemberDto.builder()
-                .memberNickname("테스트")
-                .memberEmail("test@naver.com")
-                .memberProfileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
-                .memberAuthority(AuthorityType.GENERAL)
+        MemberRegisterDto memberDto = MemberRegisterDto.builder()
+                .name("테스트")
+                .email("test@naver.com")
+                .profileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
+                .authority(AuthorityType.GENERAL)
                 .build();
         Member memberInfo = memberService.registMemberInfo(memberDto);
         String testMemberId = memberInfo.getMemberId();

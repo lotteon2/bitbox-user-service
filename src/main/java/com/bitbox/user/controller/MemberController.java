@@ -1,16 +1,15 @@
 package com.bitbox.user.controller;
 import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.domain.Member;
-import com.bitbox.user.dto.MemberDto;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
 import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
 import io.github.bitbox.bitbox.dto.MemberCreditDto;
+import io.github.bitbox.bitbox.dto.MemberRegisterDto;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,7 +27,7 @@ public class MemberController {
      */
 //    @KafkaListener(topics = "")
     @PostMapping("/signup")
-    public ResponseEntity<String> registMemberInfo(@Valid @RequestBody MemberDto memberDto) {
+    public ResponseEntity<String> registMemberInfo(@Valid @RequestBody MemberRegisterDto memberDto) {
         return ResponseEntity.ok(memberService.registMemberInfo(memberDto).getMemberId());
     }
 
