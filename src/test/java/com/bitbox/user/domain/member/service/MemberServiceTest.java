@@ -1,6 +1,5 @@
 package com.bitbox.user.domain.member.service;
 
-import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.exception.DuplicationEmailException;
@@ -90,8 +89,7 @@ public class MemberServiceTest {
     @Order(5)
     @Test
     void updateTest() {
-        MemberUpdateDto updateInfo = MemberUpdateDto.builder().memberNickname("수정완료").memberProfileImg("test.png").build();
-        Member infoResult = memberService.updateMemberInfo(member.getMemberId(), updateInfo);
+        Member infoResult = memberService.updateMemberInfo(member.getMemberId(), "test.png");
 
         assertThat(infoResult).isNotNull();
     }
@@ -104,16 +102,5 @@ public class MemberServiceTest {
 
         assertThat(result).isTrue();
     }
-
-    // TODO: KafkaTest
-//    @DisplayName("관리자가 교육생 해제를 요청하면 해당 계정의 권한은 GENERAL로 수정된다.")
-//    @Order(7)
-//    @Test
-//    void widthdrawTest() {
-//        MemberAuthorityDto memberInfo = MemberAuthorityUpdateDto.builder().memberId(member.getMemberId()).memberAuthority(member).build();
-//        AuthorityType result = memberService.modifyMemberInfo(memberInfo);
-//
-//        assertThat(result).isEqualTo(AuthorityType.GENERAL);
-//    }
 
 }

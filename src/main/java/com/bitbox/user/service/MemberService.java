@@ -1,7 +1,6 @@
 package com.bitbox.user.service;
 
 import com.bitbox.user.domain.Member;
-import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InSufficientCreditException;
 import com.bitbox.user.exception.InvalidMemberIdException;
@@ -85,14 +84,15 @@ public class MemberService {
     /**
      * 회원정보 수정
      * @param memberId
-     * @param memberUpdateDto
+     * @param memberProfileImg
      * @return Member
      */
     @Transactional
-    public Member updateMemberInfo(String memberId, MemberUpdateDto memberUpdateDto) {
+    public Member updateMemberInfo(String memberId, String memberProfileImg) {
         Member memberInfo = findByMemberId(memberId);
+        if (memberProfileImg != null) memberInfo.setMemberProfileImg(memberProfileImg);
 
-        return MemberUpdateDto.convertMemberForUpdate(memberInfo, memberUpdateDto);
+        return memberInfo;
     }
 
     /**

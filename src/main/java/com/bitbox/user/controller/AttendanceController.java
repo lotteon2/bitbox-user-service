@@ -7,6 +7,7 @@ import com.bitbox.user.service.AttendanceService;
 import com.bitbox.user.service.response.AvgAttendanceInfo;
 import com.bitbox.user.service.response.MemberInfoWithAttendance;
 import io.github.bitbox.bitbox.enums.AttendanceStatus;
+import io.github.bitbox.bitbox.jwt.JwtPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +25,8 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
 
     @GetMapping("/mypage/attendance")
-    public ResponseEntity<List<Attendance>> getAllMyAttendance(@RequestHeader String memberId) {
-        return ResponseEntity.ok(attendanceService.getAllMyAttendance(memberId));
+    public ResponseEntity<List<Attendance>> getAllMyAttendance(@RequestHeader JwtPayload payload) {
+        return ResponseEntity.ok(attendanceService.getAllMyAttendance(payload.getMemberId()));
     }
 
     @GetMapping("/admin/attendance/dashboard/{classId}")
@@ -44,13 +45,13 @@ public class AttendanceController {
     }
 
     @PatchMapping("/mypage/attendance/entrance/{attendanceId}")
-    public ResponseEntity<AttendanceStatus> memberEntrance(@RequestHeader String memberId, @PathVariable Long attendanceId, @Valid @RequestBody CurrentLocationDto currentLocationDto) {
-        return ResponseEntity.ok(attendanceService.memberEntrance(memberId, attendanceId, currentLocationDto));
+    public ResponseEntity<AttendanceStatus> memberEntrance(@RequestHeader JwtPayload payload, @PathVariable Long attendanceId, @Valid @RequestBody CurrentLocationDto currentLocationDto) {
+        return ResponseEntity.ok(attendanceService.memberEntrance(payload.getMemberId(), attendanceId, currentLocationDto));
     }
 
     @PatchMapping("/mypage/attendance/quit/{attendanceId}")
-    public ResponseEntity<AttendanceStatus> memberQuit(@RequestHeader String memberId, @PathVariable Long attendanceId, @Valid @RequestBody CurrentLocationDto currentLocationDto) {
-        attendanceService.memberQuit(memberId, attendanceId, currentLocationDto);
+    public ResponseEntity<AttendanceStatus> memberQuit(@RequestHeader JwtPayload payload, @PathVariable Long attendanceId, @Valid @RequestBody CurrentLocationDto currentLocationDto) {
+        attendanceService.memberQuit(payload.getMemberId(), attendanceId, currentLocationDto);
         return ResponseEntity.ok().build();
     }
 }

@@ -1,5 +1,4 @@
 package com.bitbox.user.controller;
-import com.bitbox.user.dto.MemberUpdateDto;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
@@ -7,6 +6,7 @@ import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
 import io.github.bitbox.bitbox.dto.MemberCreditDto;
 import io.github.bitbox.bitbox.dto.MemberRegisterDto;
 import io.github.bitbox.bitbox.enums.AuthorityType;
+import io.github.bitbox.bitbox.jwt.JwtPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +35,8 @@ public class MemberController {
      * 회원정보 조회(일반 회원)
      */
     @GetMapping("/mypage")
-    public ResponseEntity<Member> getMyInfo(@RequestHeader String memberId) {
-        return ResponseEntity.ok(memberService.getMyInfo(memberId));
+    public ResponseEntity<Member> getMyInfo(@RequestHeader JwtPayload payload) {
+        return ResponseEntity.ok(memberService.getMyInfo(payload.getMemberId()));
     }
 
     /**
@@ -51,8 +51,8 @@ public class MemberController {
      * 내 정보 수정
      */
     @PatchMapping("/mypage")
-    public ResponseEntity<Member> updateMemberInfo(@RequestHeader String memberId, @RequestBody MemberUpdateDto memberUpdateDto) {
-        return ResponseEntity.ok(memberService.updateMemberInfo(memberId, memberUpdateDto));
+    public ResponseEntity<Member> updateMemberInfo(@RequestHeader JwtPayload payload, @RequestBody String memberProfileImg) {
+        return ResponseEntity.ok(memberService.updateMemberInfo(payload.getMemberId(), memberProfileImg));
     }
 
     /**
@@ -67,8 +67,8 @@ public class MemberController {
      * 회원 탈퇴
      */
     @DeleteMapping("/mypage")
-    public ResponseEntity<Boolean> widthdrawMember(@RequestHeader String memberId) {
-        return ResponseEntity.ok(memberService.withdrawMember(memberId));
+    public ResponseEntity<Boolean> widthdrawMember(@RequestHeader JwtPayload payload) {
+        return ResponseEntity.ok(memberService.withdrawMember(payload.getMemberId()));
     }
 
 
