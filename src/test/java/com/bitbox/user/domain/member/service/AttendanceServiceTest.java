@@ -256,12 +256,54 @@ public class AttendanceServiceTest {
     @Order(14)
     @Test
     public void getAllAttendanceForAdmin() {
-        List<MemberInfoWithAttendance> attendanceList = attendanceService.getAttendanceForAdmin(1);
-        assertThat(attendanceList).isNotNull();
+        CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
+        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), entrace);
+        CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("22:00:00").build();
+        attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId(), quit);
+
+        List<MemberInfoWithAttendance> attendanceList = attendanceService.getAttendanceForAdmin(1, null, null);
+        assertThat(attendanceList.size()).isEqualTo(11);
+    }
+    @DisplayName("관리자가 classId를 기준으로 출결 정보를 조회할 수 있다. 특정 날짜로 필터링할 수 있다.")
+    @Order(15)
+    @Test
+    public void getAllAttendanceForAdminWithSelectedDate() {
+        CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
+        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), entrace);
+        CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("22:00:00").build();
+        attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId(), quit);
+
+        List<MemberInfoWithAttendance> attendanceList = attendanceService.getAttendanceForAdmin(1, LocalDate.now(), null);
+        assertThat(attendanceList.size()).isEqualTo(1);
     }
 
+    @DisplayName("관리자가 classId를 기준으로 출결 정보를 조회할 수 있다. 특정 교육생 이름으로 필터링할 수 있다.")
+    @Order(16)
+    @Test
+    public void getAllAttendanceForAdminWithStudentName() {
+        CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
+        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), entrace);
+        CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("22:00:00").build();
+        attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId(), quit);
+
+        List<MemberInfoWithAttendance> attendanceList = attendanceService.getAttendanceForAdmin(1, null, "김");
+        assertThat(attendanceList.size()).isEqualTo(11);
+    }
+
+    @DisplayName("관리자가 classId를 기준으로 출결 정보를 조회할 수 있다. 특정 날짜와 특정 교육생으로 필터링할 수 있다.")
+    @Order(17)
+    @Test
+    public void getAllAttendanceForAdminWithSelectedDateAndStudentName() {
+        CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
+        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), entrace);
+        CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("22:00:00").build();
+        attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId(), quit);
+
+        List<MemberInfoWithAttendance> attendanceList = attendanceService.getAttendanceForAdmin(1, LocalDate.now(), "김");
+        assertThat(attendanceList.size()).isEqualTo(1);
+    }
     @DisplayName("관리자가 classId를 기준으로 반별 출석 인원 현황을 조회할 수 있다.")
-    @Order(15)
+    @Order(18)
     @Test
     public void getAllAttendanceForAdminDashboard() {
         List<AvgAttendanceInfo> attendanceList = attendanceService.getAttendanceForDashboard(1);
@@ -270,7 +312,7 @@ public class AttendanceServiceTest {
     }
 
     @DisplayName("관리자는 학생들의 출결 상태를 수정할 수 있다.")
-    @Order(16)
+    @Order(19)
     @Test
     public void updateAttendanceState() {
         AttendanceUpdateDto update = AttendanceUpdateDto.builder().attendanceId(getFirstAttendance().getAttendanceId()).attendanceState(AttendanceStatus.ATTENDANCE).attendanceModifyReason("TEST").build();
