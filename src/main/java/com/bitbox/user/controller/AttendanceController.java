@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.ws.rs.PathParam;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -32,8 +34,8 @@ public class AttendanceController {
     }
 
     @GetMapping("/admin/attendance/{classId}")
-    public ResponseEntity<List<MemberInfoWithAttendance>> getAllAttendance(@PathVariable Long classId) {
-        return ResponseEntity.ok(attendanceService.getAttendanceForAdmin(classId));
+    public ResponseEntity<List<MemberInfoWithAttendance>> getAllAttendance(@PathVariable Long classId, @RequestParam(required = false) LocalDate current, @RequestParam(required = false) String memberNickname) {
+        return ResponseEntity.ok(attendanceService.getAttendanceForAdmin(classId, current, memberNickname));
     }
 
     @PatchMapping("/admin/attendance")

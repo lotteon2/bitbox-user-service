@@ -9,6 +9,7 @@ import com.bitbox.user.exception.InvalidAttendanceRequestException;
 import com.bitbox.user.exception.InvalidMemberIdException;
 import com.bitbox.user.repository.AttendanceRepository;
 import com.bitbox.user.repository.MemberInfoRepository;
+import com.bitbox.user.repository.custom.AttendanceCustom;
 import com.bitbox.user.service.response.AvgAttendanceInfo;
 import com.bitbox.user.service.response.MemberInfoWithAttendance;
 import com.bitbox.user.util.AttendanceUtil;
@@ -111,8 +112,8 @@ public class AttendanceService {
      * @param classId
      * @return
      */
-    public List<MemberInfoWithAttendance> getAttendanceForAdmin(long classId) {
-        return attendanceRepository.findByClassIdForAdmin(classId);
+    public List<MemberInfoWithAttendance> getAttendanceForAdmin(long classId, LocalDate current, String memberNickname) {
+        return attendanceRepository.findByClassIdForAdmin(classId, current, memberNickname);
     }
 
     /**

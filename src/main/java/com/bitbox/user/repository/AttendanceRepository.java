@@ -1,6 +1,7 @@
 package com.bitbox.user.repository;
 
 import com.bitbox.user.domain.Attendance;
+import com.bitbox.user.repository.custom.AttendanceCustom;
 import com.bitbox.user.service.response.AvgAttendanceInfo;
 import com.bitbox.user.service.response.MemberInfoWithAttendance;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +10,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface AttendanceRepository extends CrudRepository<Attendance, Long> {
+public interface AttendanceRepository extends CrudRepository<Attendance, Long> , AttendanceCustom {
 
     Attendance findByAttendanceId(long attendanceId);
 
@@ -35,11 +36,11 @@ public interface AttendanceRepository extends CrudRepository<Attendance, Long> {
 //    @Query(value = "SELECT a " +
 //            "FROM Attendance a INNER JOIN Member m ON a.member.memberId = m.memberId " +
 //            "WHERE m.classId = :classId AND a.attendanceDate BETWEEN :before AND :after ORDER BY a.attendanceDate")
-    @Query(value = "SELECT new com.bitbox.user.service.response.MemberInfoWithAttendance( " +
-            "m.memberId, m.memberProfileImg, m.memberNickname, a.attendanceId, a.attendanceDate, CONCAT(a.attendanceDate, ' ', a.entraceTime) , CONCAT(a.attendanceDate, ' ', a.quitTime), a.attendanceState, a.attendanceModifyReason, r.reasonTitle) " +
-            "FROM Attendance a INNER JOIN Member m ON a.member.memberId = m.memberId " +
-            "LEFT JOIN ReasonStatement r ON a.attendanceId = r.attendance.attendanceId WHERE m.classId = :classId ORDER BY a.attendanceDate DESC, m.memberNickname")
-    List<MemberInfoWithAttendance> findByClassIdForAdmin(long classId);
+//    @Query(value = "SELECT new com.bitbox.user.service.response.MemberInfoWithAttendance( " +
+//            "m.memberId, m.memberProfileImg, m.memberNickname, a.attendanceId, a.attendanceDate, CONCAT(a.attendanceDate, ' ', a.entraceTime) , CONCAT(a.attendanceDate, ' ', a.quitTime), a.attendanceState, a.attendanceModifyReason, r.reasonTitle) " +
+//            "FROM Attendance a INNER JOIN Member m ON a.member.memberId = m.memberId " +
+//            "LEFT JOIN ReasonStatement r ON a.attendanceId = r.attendance.attendanceId WHERE m.classId = :classId ORDER BY a.attendanceDate DESC, m.memberNickname")
+//    List<MemberInfoWithAttendance> findByClassIdForAdmin(long classId);
 
     /**
      * 내 출결 조회

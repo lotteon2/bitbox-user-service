@@ -10,6 +10,7 @@ import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,6 +26,7 @@ public class MemberController {
     /**
      * 회원가입
      */
+//    @KafkaListener(topics = "")
     @PostMapping("/signup")
     public ResponseEntity<String> registMemberInfo(@Valid @RequestBody MemberDto memberDto) {
         return ResponseEntity.ok(memberService.registMemberInfo(memberDto).getMemberId());
