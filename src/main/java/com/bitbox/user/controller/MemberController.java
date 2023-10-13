@@ -35,8 +35,8 @@ public class MemberController {
      * 회원정보 조회(일반 회원)
      */
     @GetMapping("/mypage")
-    public ResponseEntity<Member> getMyInfo(@RequestHeader JwtPayload payload) {
-        return ResponseEntity.ok(memberService.getMyInfo(payload.getMemberId()));
+    public ResponseEntity<Member> getMyInfo(@RequestHeader String memberId) {
+        return ResponseEntity.ok(memberService.getMyInfo(memberId));
     }
 
     /**
@@ -51,8 +51,8 @@ public class MemberController {
      * 내 정보 수정
      */
     @PatchMapping("/mypage")
-    public ResponseEntity<Member> updateMemberInfo(@RequestHeader JwtPayload payload, @RequestBody String memberProfileImg) {
-        return ResponseEntity.ok(memberService.updateMemberInfo(payload.getMemberId(), memberProfileImg));
+    public ResponseEntity<Member> updateMemberInfo(@RequestHeader String memberId, @RequestBody String memberProfileImg) {
+        return ResponseEntity.ok(memberService.updateMemberInfo(memberId, memberProfileImg));
     }
 
     /**
@@ -67,8 +67,8 @@ public class MemberController {
      * 회원 탈퇴
      */
     @DeleteMapping("/mypage")
-    public ResponseEntity<Boolean> widthdrawMember(@RequestHeader JwtPayload payload) {
-        return ResponseEntity.ok(memberService.withdrawMember(payload.getMemberId()));
+    public ResponseEntity<Boolean> widthdrawMember(@RequestHeader String memberId) {
+        return ResponseEntity.ok(memberService.withdrawMember(memberId));
     }
 
 
