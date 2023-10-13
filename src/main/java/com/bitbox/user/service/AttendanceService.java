@@ -1,14 +1,19 @@
 package com.bitbox.user.service;
 
 import com.bitbox.user.domain.Attendance;
+import com.bitbox.user.domain.Member;
 import com.bitbox.user.dto.AttendanceUpdateDto;
 import com.bitbox.user.dto.CurrentLocationDto;
 import com.bitbox.user.exception.InvalidAttendanceException;
+import com.bitbox.user.exception.InvalidAttendanceRequestException;
 import com.bitbox.user.exception.InvalidMemberIdException;
 import com.bitbox.user.repository.AttendanceRepository;
 import com.bitbox.user.repository.MemberInfoRepository;
+import com.bitbox.user.service.response.AvgAttendanceInfo;
+import com.bitbox.user.service.response.MemberInfoWithAttendance;
 import com.bitbox.user.util.AttendanceUtil;
 import io.github.bitbox.bitbox.enums.AttendanceStatus;
+import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,21 +37,25 @@ public class AttendanceService {
      * @param currentLocationDto
      */
     @Transactional
-    public AttendanceStatus memberEntrance(Long attendanceId, CurrentLocationDto currentLocationDto) {
+    public AttendanceStatus memberEntrance(String memberId, Long attendanceId, CurrentLocationDto currentLocationDto) {
         LocalTime current = AttendanceUtil.getCurrent(currentLocationDto);
         Attendance attendance = getAttendance(attendanceId, currentLocationDto);
-        attendance.setEntraceTime(current);
+        Member memberInfo = attendance.getMember();
 
-        // [TODO] 중복 코드 공통화
-        if ((current.isAfter(AttendanceUtil.BEFORE_ATTENDANCE_TIME_ENTRACE) && current.isBefore(AttendanceUtil.ATTENDANCE_TIME_ENTRACE))
-                || current.equals(AttendanceUtil.ATTENDANCE_TIME_ENTRACE)) { // 출석
+        // 7시 이전 입실 요청 | 14시 이후 입실 요청 | 본인의 출결이 아닌 경우 => 예외
+        if (!(memberInfo.getMemberId().equals(memberId)) || current.isBefore(AttendanceUtil.BEFORE_ATTENDANCE_TIME_ENTRACE) || current.isAfter(AttendanceUtil.ATTENDANCE_TIME_VALID)) throw new InvalidAttendanceRequestException("유효하지 않은 출결 요청입니다.");
+        // 입실은 유효한 처음 요청만 저장
+        if (attendance.getAttendanceState() != AttendanceStatus.ABSENT) return attendance.getAttendanceState();
+        // 7시 ~ 9시 입실 => 출석
+        if (current.isAfter(AttendanceUtil.BEFORE_ATTENDANCE_TIME_ENTRACE) && current.isBefore(AttendanceUtil.ATTENDANCE_TIME_ENTRACE)) {
             attendance.setAttendanceState(AttendanceStatus.ATTENDANCE);
-        } else if(current.isAfter(AttendanceUtil.ATTENDANCE_TIME_ENTRACE)) { // 입실 시간보다 늦게 입실체크한 경우 지각
+        }
+        // 9시 ~ 14시 입실 => 지각
+        else if (current.isAfter(AttendanceUtil.ATTENDANCE_TIME_ENTRACE) && current.isBefore(AttendanceUtil.ATTENDANCE_TIME_VALID)) {
             attendance.setAttendanceState(AttendanceStatus.TARDY);
-        } else if(current.isAfter(AttendanceUtil.ATTENDANCE_TIME_VALID)) {
-
         }
 
+        attendance.setEntraceTime(current);
         return attendance.getAttendanceState();
     }
 
@@ -56,15 +65,26 @@ public class AttendanceService {
      * @param currentLocationDto
      */
     @Transactional
-    public void memberQuit(Long attendanceId, CurrentLocationDto currentLocationDto) {
+    public AttendanceStatus memberQuit(String memberId, Long attendanceId, CurrentLocationDto currentLocationDto) {
         LocalTime current = AttendanceUtil.getCurrent(currentLocationDto);
         Attendance attendance = getAttendance(attendanceId, currentLocationDto);
+        Member memberInfo = attendance.getMember();
+
+        // 14시 이전 퇴실 요청 | 22시 이후 퇴실 요청 | 본인의 출결이 아닌 경우 => 예외
+        if (!(memberInfo.getMemberId().equals(memberId)) || current.isBefore(AttendanceUtil.ATTENDANCE_TIME_VALID) || current.isAfter(AttendanceUtil.AFTER_ATTENDANCE_TIME_QUIT)) throw new InvalidAttendanceRequestException("유효하지 않은 출결 요청입니다.");
+
+        // 현재 출결상태인 경우
+        if (attendance.getAttendanceState() == AttendanceStatus.ATTENDANCE) {
+            // 14시 ~ 18시 퇴실 => 조퇴
+            if (current.isAfter(AttendanceUtil.ATTENDANCE_TIME_VALID) && current.isBefore(AttendanceUtil.ATTENDANCE_TIME_QUIT)) {
+                attendance.setAttendanceState(AttendanceStatus.LEAVE_EARLY);
+            }
+            // 18시 ~ 22시 퇴실 => 출석 유지
+        }
+        // 예외 시간 이외의 퇴실 요청에 대해서 현재 지각 | 결석 상태인 경우 이전 상태 그대로 유지
         attendance.setQuitTime(current);
 
-        // [TODO] 중복 코드 공통화
-        if (attendance.getAttendanceState() == AttendanceStatus.ATTENDANCE && current.isBefore(AttendanceUtil.ATTENDANCE_TIME_QUIT)) { // 현재 출석 상태에서 퇴실 시간보다 일찍 퇴실체크한 경우 조퇴
-            attendance.setAttendanceState(AttendanceStatus.GO_OUT);
-        }
+        return attendance.getAttendanceState();
     }
 
     /**
@@ -78,12 +98,21 @@ public class AttendanceService {
     }
 
     /**
-     * 클래스별 출결 조회(관리자)
+     * 오늘 포함 7일에 대한 특정 반의 날짜별 평균 정보 조회
      * @param classId
      * @return
      */
-    public List<Attendance> getAttendanceForAdmin(long classId) {
-        return attendanceRepository.findByClassIdForAdmin(classId, LocalDate.now().minusDays(6), LocalDate.now());
+    public List<AvgAttendanceInfo> getAttendanceForDashboard(long classId) {
+        return attendanceRepository.findByClassIdForAdminDashBoard(classId, LocalDate.now().minusDays(6), LocalDate.now());
+    }
+
+    /**
+     * 클래스별 출결 정보 조회(관리자)
+     * @param classId
+     * @return
+     */
+    public List<MemberInfoWithAttendance> getAttendanceForAdmin(long classId) {
+        return attendanceRepository.findByClassIdForAdmin(classId);
     }
 
     /**

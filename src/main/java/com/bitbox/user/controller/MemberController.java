@@ -18,14 +18,10 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
-@CrossOrigin("*") // [TODO] 일단 컨트롤러에 붙이기는 했는데 확인 필요.
+@CrossOrigin("*")
 public class MemberController {
     private final MemberService memberService;
 
-    @GetMapping("")
-    public ResponseEntity<Member> getAll() {
-        return ResponseEntity.ok(memberService.getMyInfo("4e5ccba9-5512-46e4-8095-eaffc42a633b")); // [TODO] 뭐야 이 프리픽스는?
-    }
     /**
      * 회원가입
      */
@@ -54,7 +50,7 @@ public class MemberController {
      * 내 정보 수정
      */
     @PatchMapping("/mypage")
-    public ResponseEntity<Member> updateMemberInfo(@RequestHeader String memberId, @Valid @RequestBody MemberUpdateDto memberUpdateDto) {
+    public ResponseEntity<Member> updateMemberInfo(@RequestHeader String memberId, @RequestBody MemberUpdateDto memberUpdateDto) {
         return ResponseEntity.ok(memberService.updateMemberInfo(memberId, memberUpdateDto));
     }
 
@@ -62,7 +58,7 @@ public class MemberController {
      * 회원 권한 수정(관리자)
      */
     @PatchMapping("/admin")
-    public ResponseEntity<AuthorityType> updateMemberInfo(@Valid @RequestBody MemberAuthorityDto memberAuthorityDto) {
+    public ResponseEntity<AuthorityType> updateMemberInfo(@RequestBody MemberAuthorityDto memberAuthorityDto) {
         return ResponseEntity.ok(memberService.modifyMemberInfo(memberAuthorityDto));
     }
 
@@ -79,7 +75,7 @@ public class MemberController {
      * 크레딧 소모
      */
     @PatchMapping("/credit")
-    public ResponseEntity<Long> useMyCredit(@Valid @RequestBody MemberCreditDto memberCreditDto) { // [TODO] 나 여기다가 체크하는 어노테이션이 없는데 왠 Valid?
+    public ResponseEntity<Long> useMyCredit(@RequestBody MemberCreditDto memberCreditDto) {
         return ResponseEntity.ok(memberService.useMyCredit(memberCreditDto));
     }
 

@@ -58,6 +58,7 @@ public class Member {
     private long memberCredit;
 
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("'GENERAL'")
     @Column(name = "member_authority", nullable = false)
     private AuthorityType memberAuthority;
 

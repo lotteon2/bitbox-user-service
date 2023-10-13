@@ -4,6 +4,8 @@ import com.bitbox.user.domain.Attendance;
 import com.bitbox.user.dto.AttendanceUpdateDto;
 import com.bitbox.user.dto.CurrentLocationDto;
 import com.bitbox.user.service.AttendanceService;
+import com.bitbox.user.service.response.AvgAttendanceInfo;
+import com.bitbox.user.service.response.MemberInfoWithAttendance;
 import io.github.bitbox.bitbox.enums.AttendanceStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +15,9 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/member") // [TODO] 이게 왜 MemberController랑 같아?
+@RequestMapping("/member")
 @RequiredArgsConstructor
-@CrossOrigin("*") // [TODO] 일단 컨트롤러에 붙이기는 했는데 확인 필요.
+@CrossOrigin("*")
 public class AttendanceController {
     private final AttendanceService attendanceService;
 
@@ -24,8 +26,13 @@ public class AttendanceController {
         return ResponseEntity.ok(attendanceService.getAllMyAttendance(memberId));
     }
 
+    @GetMapping("/admin/attendance/dashboard/{classId}")
+    public ResponseEntity<List<AvgAttendanceInfo>> getAllAttendanceForDashboard(@PathVariable Long classId) {
+        return ResponseEntity.ok(attendanceService.getAttendanceForDashboard(classId));
+    }
+
     @GetMapping("/admin/attendance/{classId}")
-    public ResponseEntity<List<Attendance>> getAllAttendance(@PathVariable Long classId) {
+    public ResponseEntity<List<MemberInfoWithAttendance>> getAllAttendance(@PathVariable Long classId) {
         return ResponseEntity.ok(attendanceService.getAttendanceForAdmin(classId));
     }
 
@@ -35,13 +42,13 @@ public class AttendanceController {
     }
 
     @PatchMapping("/mypage/attendance/entrance/{attendanceId}")
-    public ResponseEntity<AttendanceStatus> memberEntrance(@PathVariable Long attendanceId, @Valid @RequestBody CurrentLocationDto currentLocationDto) {
-        return ResponseEntity.ok(attendanceService.memberEntrance(attendanceId, currentLocationDto));
+    public ResponseEntity<AttendanceStatus> memberEntrance(@RequestHeader String memberId, @PathVariable Long attendanceId, @Valid @RequestBody CurrentLocationDto currentLocationDto) {
+        return ResponseEntity.ok(attendanceService.memberEntrance(memberId, attendanceId, currentLocationDto));
     }
 
     @PatchMapping("/mypage/attendance/quit/{attendanceId}")
-    public ResponseEntity<Void> memberQuit(@PathVariable Long attendanceId, @Valid @RequestBody CurrentLocationDto currentLocationDto) {
-        attendanceService.memberQuit(attendanceId, currentLocationDto);
+    public ResponseEntity<AttendanceStatus> memberQuit(@RequestHeader String memberId, @PathVariable Long attendanceId, @Valid @RequestBody CurrentLocationDto currentLocationDto) {
+        attendanceService.memberQuit(memberId, attendanceId, currentLocationDto);
         return ResponseEntity.ok().build();
     }
 }
