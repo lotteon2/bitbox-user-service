@@ -154,6 +154,7 @@ public class MemberService {
             memberInfo.setMemberCredit(memberInfo.getMemberCredit() + memberCreditDto.getCredit());
         } catch (Exception e) {
             log.error("userCreditModifyTopic Error" + memberCreditDto);
+            throw e;
         }
 
         return memberInfo.getMemberCredit();
