@@ -52,9 +52,10 @@ public class AttendanceServiceTest {
         Member memberInfo = memberService.registMemberInfo(memberDto);
         memberId = memberInfo.getMemberId();
 
-        for (int i = 0; i <= 10; i++) {
-            addAttendance(i, memberInfo);
-        }
+        Attendance attendance = Attendance.builder().attendanceDate(LocalDate.now()).attendanceState(AttendanceStatus.ABSENT).member(memberInfo).build();
+        attendanceRepository.save(attendance);
+
+
 
     }
 
@@ -63,7 +64,7 @@ public class AttendanceServiceTest {
     @Test
     public void entraceAttendance() {
         CurrentLocationDto location = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
-        AttendanceStatus result = attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), location);
+        AttendanceStatus result = attendanceService.memberEntrance(memberId, location);
 
 
         assertThat(result).isEqualTo(AttendanceStatus.ATTENDANCE);
@@ -74,7 +75,7 @@ public class AttendanceServiceTest {
     @Test
     public void entraceTardy() {
         CurrentLocationDto location = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("11:00:00").build();
-        AttendanceStatus result = attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), location);
+        AttendanceStatus result = attendanceService.memberEntrance(memberId, location);
 
         assertThat(result).isEqualTo(AttendanceStatus.TARDY);
     }
@@ -84,7 +85,7 @@ public class AttendanceServiceTest {
     @Test
     public void invalidEntrace() {
         CurrentLocationDto location = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("06:00:00").build();
-        assertThatThrownBy(() -> attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), location))
+        assertThatThrownBy(() -> attendanceService.memberEntrance(memberId, location))
                 .isInstanceOf(InvalidAttendanceRequestException.class)
                 .hasMessage("유효하지 않은 출결 요청입니다.");
 
@@ -97,10 +98,10 @@ public class AttendanceServiceTest {
     @Test
     public void checkFirstEntrace() {
         CurrentLocationDto location = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
-        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), location);
+        attendanceService.memberEntrance(memberId, location);
 
         CurrentLocationDto location2 = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("11:00:00").build();
-        AttendanceStatus result = attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), location2);
+        AttendanceStatus result = attendanceService.memberEntrance(memberId, location2);
 
         assertThat(result).isEqualTo(AttendanceStatus.ATTENDANCE);
     }
@@ -111,136 +112,108 @@ public class AttendanceServiceTest {
     public void outofRangeEntrace() {
         CurrentLocationDto location = CurrentLocationDto.builder().lat(37.5046).lng(127.0376).current("08:00:00").build();
 
-        assertThatThrownBy(() -> attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), location))
+        assertThatThrownBy(() -> attendanceService.memberEntrance(memberId, location))
                 .isInstanceOf(InvalidRangeAttendanceException.class)
                 .hasMessage("교육장과 멀리 떨어져 있습니다.");
     }
 
-    @DisplayName("타인의 입실을 체크할 경우 예외가 발생한다.")
-    @Order(6)
-    @Test
-    public void otherMemberEntrace() {
-        MemberRegisterDto memberDto = MemberRegisterDto.builder()
-                .name("테스트")
-                .email("test@naver.com")
-                .profileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
-                .authority(AuthorityType.GENERAL)
-                .build();
-        Member memberInfo = memberService.registMemberInfo(memberDto);
-        String testMemberId = memberInfo.getMemberId();
-
-        CurrentLocationDto location = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
-        assertThatThrownBy(() -> attendanceService.memberEntrance(testMemberId, getFirstAttendance().getAttendanceId(), location))
-                .isInstanceOf(InvalidAttendanceRequestException.class)
-                .hasMessage("유효하지 않은 출결 요청입니다.");
-    }
-
     @DisplayName("교육생은 지정된 영역 내에서 퇴실체크를 할 수 있다. 정상 입실된 상태에서 18시 ~ 22시 30분 사이 퇴실체크할 경우 출석이 인정된다.")
-    @Order(7)
+    @Order(6)
     @Test
     public void quitAttendance() {
         CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
-        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), entrace);
+        attendanceService.memberEntrance(memberId, entrace);
 
         CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("22:00:00").build();
-        AttendanceStatus result = attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId(), quit);
+        AttendanceStatus result = attendanceService.memberQuit(memberId, quit);
 
         assertThat(result).isEqualTo(AttendanceStatus.ATTENDANCE);
     }
 
     @DisplayName("교육생은 지정된 영역 내에서 퇴실체크를 할 수 있다. 정상 입실된 상태에서 14시 ~ 18시에 퇴실체크할 경우 조퇴처리된다.")
-    @Order(8)
+    @Order(7)
     @Test
     public void quitGoOut() {
         CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
-        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), entrace);
+        attendanceService.memberEntrance(memberId, entrace);
 
         CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("17:00:00").build();
-        AttendanceStatus result = attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId(), quit);
+        AttendanceStatus result = attendanceService.memberQuit(memberId, quit);
 
         assertThat(result).isEqualTo(AttendanceStatus.LEAVE_EARLY);
     }
 
     @DisplayName("교육생은 지정된 영역 내에서 퇴실체크를 할 수 있다. 지각으로 입실체크한 상태에서 14시 ~ 22시 30분 사이 퇴실체크할 경우 그대로 지각 상태로 남아있는다.")
-    @Order(9)
+    @Order(8)
     @Test
     public void quitTardy() {
         CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("11:00:00").build();
-        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), entrace);
+        attendanceService.memberEntrance(memberId, entrace);
 
         CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("15:00:00").build();
-        AttendanceStatus result = attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId(), quit);
+        AttendanceStatus result = attendanceService.memberQuit(memberId, quit);
 
         assertThat(result).isEqualTo(AttendanceStatus.TARDY); // 정상 입실 상태에서 퇴실 정보가 저장되지 않는 경우 배치를 통해 조퇴 처리
     }
 
     @DisplayName("교육생은 지정된 영역 내에서 퇴실체크를 할 수 있다. 14시 ~ 22시 30분을 제외한 시간에 퇴실체크 시 예외를 호출하며 이전 출결 상태 그대로 반영된다.")
-    @Order(10)
+    @Order(9)
     @Test
-    public void invalidQuit() {
+    public void invalidQuitAttendance() {
         // 출석
         CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
-        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), entrace);
+        attendanceService.memberEntrance(memberId, entrace);
 
         CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("13:00:00").build();
-        assertThatThrownBy(() -> attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId(), quit))
+        assertThatThrownBy(() -> attendanceService.memberQuit(memberId, quit))
                 .isInstanceOf(InvalidAttendanceRequestException.class)
                 .hasMessage("유효하지 않은 출결 요청입니다.");
 
         Attendance attendance = attendanceRepository.findByAttendanceId(getFirstAttendance().getAttendanceId());
         assertThat(attendance.getAttendanceState()).isEqualTo(AttendanceStatus.ATTENDANCE); // 정상 입실 상태에서 퇴실 정보가 저장되지 않는 경우 배치를 통해 조퇴 처리
+    }
 
+    @DisplayName("교육생은 지정된 영역 내에서 퇴실체크를 할 수 있다. 14시 ~ 22시 30분을 제외한 시간에 퇴실체크 시 예외를 호출하며 이전 출결 상태 그대로 반영된다.")
+    @Order(10)
+    @Test
+    public void invalidQuitTardy() {
         // 지각
-        CurrentLocationDto entrace2 = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("11:00:00").build();
-        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId() + 1, entrace2);
+        CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("11:00:00").build();
+        attendanceService.memberEntrance(memberId, entrace);
 
-        CurrentLocationDto quit2 = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("13:00:00").build();
-        assertThatThrownBy(() -> attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId() + 1, quit2))
+        CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("13:00:00").build();
+        assertThatThrownBy(() -> attendanceService.memberQuit(memberId, quit))
                 .isInstanceOf(InvalidAttendanceRequestException.class)
                 .hasMessage("유효하지 않은 출결 요청입니다.");
 
-        Attendance attendance2 = attendanceRepository.findByAttendanceId(getFirstAttendance().getAttendanceId() + 1);
-        assertThat(attendance2.getAttendanceState()).isEqualTo(AttendanceStatus.TARDY);
+        Attendance attendance = attendanceRepository.findByAttendanceId(getFirstAttendance().getAttendanceId());
+        assertThat(attendance.getAttendanceState()).isEqualTo(AttendanceStatus.TARDY);
+    }
 
+    @DisplayName("교육생은 지정된 영역 내에서 퇴실체크를 할 수 있다. 14시 ~ 22시 30분을 제외한 시간에 퇴실체크 시 예외를 호출하며 이전 출결 상태 그대로 반영된다.")
+    @Order(11)
+    @Test
+    public void invalidQuitAbsent() {
         // 입실 기록 없음
-        CurrentLocationDto entrace3 = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("15:00:00").build();
-        assertThatThrownBy(() -> attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId() + 2, entrace3))
+        CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("15:00:00").build();
+        assertThatThrownBy(() -> attendanceService.memberEntrance(memberId, entrace))
                 .isInstanceOf(InvalidAttendanceRequestException.class)
                 .hasMessage("유효하지 않은 출결 요청입니다.");
 
-        CurrentLocationDto quit3 = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("20:00:00").build();
-        AttendanceStatus result = attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId() + 2, quit3);
+        CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("20:00:00").build();
+        AttendanceStatus result = attendanceService.memberQuit(memberId, quit);
         assertThat(result).isEqualTo(AttendanceStatus.ABSENT);
     }
 
     @DisplayName("교육생이 지정된 영역 밖에서 퇴실체크할 경우 예외가 발생한다.")
-    @Order(11)
+    @Order(12)
     @Test
     public void outofRangeQuit() {
         CurrentLocationDto location = CurrentLocationDto.builder().lat(37.5046).lng(127.0376).current("22:00:00").build();
 
-        assertThatThrownBy(() -> attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId(), location))
+        assertThatThrownBy(() -> attendanceService.memberQuit(memberId, location))
                 .isInstanceOf(InvalidRangeAttendanceException.class)
                 .hasMessage("교육장과 멀리 떨어져 있습니다.");
-    }
-
-    @DisplayName("타인의 퇴실을 체크할 경우 예외가 발생한다.")
-    @Order(12)
-    @Test
-    public void otherMemberQuit() {
-        MemberRegisterDto memberDto = MemberRegisterDto.builder()
-                .name("테스트")
-                .email("test@naver.com")
-                .profileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
-                .authority(AuthorityType.GENERAL)
-                .build();
-        Member memberInfo = memberService.registMemberInfo(memberDto);
-        String testMemberId = memberInfo.getMemberId();
-
-        CurrentLocationDto location = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("22:00:00").build();
-        assertThatThrownBy(() -> attendanceService.memberQuit(testMemberId, getFirstAttendance().getAttendanceId(), location))
-                .isInstanceOf(InvalidAttendanceRequestException.class)
-                .hasMessage("유효하지 않은 출결 요청입니다.");
     }
 
 
@@ -257,21 +230,21 @@ public class AttendanceServiceTest {
     @Test
     public void getAllAttendanceForAdmin() {
         CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
-        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), entrace);
+        attendanceService.memberEntrance(memberId, entrace);
         CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("22:00:00").build();
-        attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId(), quit);
+        attendanceService.memberQuit(memberId, quit);
 
         List<MemberInfoWithAttendance> attendanceList = attendanceService.getAttendanceForAdmin(1, null, null);
-        assertThat(attendanceList.size()).isEqualTo(11);
+        assertThat(attendanceList.size()).isEqualTo(1);
     }
     @DisplayName("관리자가 classId를 기준으로 출결 정보를 조회할 수 있다. 특정 날짜로 필터링할 수 있다.")
     @Order(15)
     @Test
     public void getAllAttendanceForAdminWithSelectedDate() {
         CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
-        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), entrace);
+        attendanceService.memberEntrance(memberId, entrace);
         CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("22:00:00").build();
-        attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId(), quit);
+        attendanceService.memberQuit(memberId, quit);
 
         List<MemberInfoWithAttendance> attendanceList = attendanceService.getAttendanceForAdmin(1, LocalDate.now(), null);
         assertThat(attendanceList.size()).isEqualTo(1);
@@ -282,12 +255,12 @@ public class AttendanceServiceTest {
     @Test
     public void getAllAttendanceForAdminWithStudentName() {
         CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
-        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), entrace);
+        attendanceService.memberEntrance(memberId, entrace);
         CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("22:00:00").build();
-        attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId(), quit);
+        attendanceService.memberQuit(memberId, quit);
 
         List<MemberInfoWithAttendance> attendanceList = attendanceService.getAttendanceForAdmin(1, null, "김");
-        assertThat(attendanceList.size()).isEqualTo(11);
+        assertThat(attendanceList.size()).isEqualTo(1);
     }
 
     @DisplayName("관리자가 classId를 기준으로 출결 정보를 조회할 수 있다. 특정 날짜와 특정 교육생으로 필터링할 수 있다.")
@@ -295,9 +268,9 @@ public class AttendanceServiceTest {
     @Test
     public void getAllAttendanceForAdminWithSelectedDateAndStudentName() {
         CurrentLocationDto entrace = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("08:00:00").build();
-        attendanceService.memberEntrance(memberId, getFirstAttendance().getAttendanceId(), entrace);
+        attendanceService.memberEntrance(memberId, entrace);
         CurrentLocationDto quit = CurrentLocationDto.builder().lat(37.4946).lng(127.0276).current("22:00:00").build();
-        attendanceService.memberQuit(memberId, getFirstAttendance().getAttendanceId(), quit);
+        attendanceService.memberQuit(memberId, quit);
 
         List<MemberInfoWithAttendance> attendanceList = attendanceService.getAttendanceForAdmin(1, LocalDate.now(), "김");
         assertThat(attendanceList.size()).isEqualTo(1);
@@ -326,10 +299,6 @@ public class AttendanceServiceTest {
         return attendanceList.get(0);
     }
 
-    private void addAttendance(int num, Member memberInfo) {
-        Attendance attendance = Attendance.builder().attendanceDate(LocalDate.now().minusDays(num)).attendanceState(AttendanceStatus.ABSENT).member(memberInfo).build();
-        attendanceRepository.save(attendance);
-    }
 
     private Boolean checkAttendanceDate(LocalDate before, LocalDate after, List<AvgAttendanceInfo> attendanceList) {
         for (AvgAttendanceInfo attendance: attendanceList) {

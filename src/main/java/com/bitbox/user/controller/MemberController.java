@@ -1,8 +1,10 @@
 package com.bitbox.user.controller;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.dto.MemberInfoUpdateDto;
+import com.bitbox.user.dto.MemberValidDto;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
+import com.bitbox.user.service.response.TraineeList;
 import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
 import io.github.bitbox.bitbox.dto.MemberCreditDto;
 import io.github.bitbox.bitbox.dto.MemberRegisterDto;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -30,11 +33,23 @@ public class MemberController {
         return ResponseEntity.ok(memberService.registMemberInfo(memberDto).getMemberId());
     }
 
+    /**
+     * 교육생 이름 등록
+     */
     @PatchMapping("/name")
     public ResponseEntity<Void> registTraineeName(@RequestHeader String memberId, @RequestBody String memberName) {
         memberService.AddTraineeName(memberId, memberName);
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * 교육생 유효성 검사
+     */
+    @GetMapping("/admin/check")
+    public ResponseEntity<TraineeList> checkMemberValid(@RequestBody List<MemberValidDto> memberValidDto) {
+        return ResponseEntity.ok(memberService.checkMemberValid(memberValidDto));
+    }
+
     /**
      * 회원정보 조회(일반 회원)
      */

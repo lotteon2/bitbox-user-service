@@ -31,13 +31,12 @@ public class AttendanceService {
 
     /**
      * 입실 체크
-     * @param attendanceId
      * @param currentLocationDto
      */
     @Transactional
-    public AttendanceStatus memberEntrance(String memberId, Long attendanceId, CurrentLocationDto currentLocationDto) {
+    public AttendanceStatus memberEntrance(String memberId, CurrentLocationDto currentLocationDto) {
         LocalTime current = AttendanceUtil.getCurrent(currentLocationDto);
-        Attendance attendance = getAttendance(attendanceId, currentLocationDto);
+        Attendance attendance = getAttendance(memberId, currentLocationDto);
         Member memberInfo = attendance.getMember();
 
         return AttendanceUtil.checkEntraceTime(memberId, memberInfo, current, attendance);
@@ -47,13 +46,12 @@ public class AttendanceService {
 
     /**
      * 퇴실 체크
-     * @param attendanceId
      * @param currentLocationDto
      */
     @Transactional
-    public AttendanceStatus memberQuit(String memberId, Long attendanceId, CurrentLocationDto currentLocationDto) {
+    public AttendanceStatus memberQuit(String memberId, CurrentLocationDto currentLocationDto) {
         LocalTime current = AttendanceUtil.getCurrent(currentLocationDto);
-        Attendance attendance = getAttendance(attendanceId, currentLocationDto);
+        Attendance attendance = getAttendance(memberId, currentLocationDto);
         Member memberInfo = attendance.getMember();
 
         return AttendanceUtil.checkQuitTime(memberId, memberInfo, current, attendance);
@@ -65,7 +63,7 @@ public class AttendanceService {
      * @return
      */
     public List<Attendance> getAllMyAttendance(String memberId) {
-        return memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberId).orElseThrow(() -> new InvalidMemberIdException("존재하지 않거나 유효하지 않은 회원정보입니다.")).getAttendances();
+        return attendanceRepository.findAllByMember_MemberId(memberId);
     }
 
     /**
@@ -101,8 +99,8 @@ public class AttendanceService {
         return attendanceRepository.save(attendance).getAttendanceState();
     }
 
-    private Attendance getAttendance(Long attendanceId, CurrentLocationDto currentLocationDto) {
-        Attendance attendance = attendanceRepository.findById(attendanceId).orElseThrow(() -> new InvalidAttendanceException("존재하지 않는 출결정보입니다."));
+    private Attendance getAttendance(String memberId, CurrentLocationDto currentLocationDto) {
+        Attendance attendance = attendanceRepository.findByMemberIdAndAttendanceDate(memberId, LocalDate.now());
 
         // 반경 100M 이내
         AttendanceUtil.checkLocation(currentLocationDto.getLat(),currentLocationDto.getLng());

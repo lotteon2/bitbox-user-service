@@ -2,11 +2,13 @@ package com.bitbox.user.service;
 
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.dto.MemberInfoUpdateDto;
+import com.bitbox.user.dto.MemberValidDto;
 import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InSufficientCreditException;
 import com.bitbox.user.exception.InvalidMemberIdException;
 import com.bitbox.user.repository.MemberInfoRepository;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
+import com.bitbox.user.service.response.TraineeList;
 import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
 import io.github.bitbox.bitbox.dto.MemberCreditDto;
 import io.github.bitbox.bitbox.dto.MemberPaymentDto;
@@ -21,6 +23,10 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +68,8 @@ public class MemberService {
 
     /**
      * 교육생 이름 등록
+     * @param memberId
+     * @param memberName
      */
     @Transactional
     public void AddTraineeName(String memberId, String memberName) {
@@ -72,7 +80,7 @@ public class MemberService {
      * 회원정보 조회(일반 사용자)
      * memberId에 해당하는 사용자 정보 조회
      * @param memberId
-     * @return MemberInfoResponse
+     * @return Member
      */
     public Member getMyInfo(String memberId) {
         return findByMemberId(memberId);
@@ -188,4 +196,28 @@ public class MemberService {
     }
 
 
+    public TraineeList checkMemberValid(List<MemberValidDto> memberValidDto) {
+        List<MemberValidDto> validMember = new ArrayList<>();
+        List<MemberValidDto> invalidMember = new ArrayList<>();
+
+        for (MemberValidDto memberInfo : memberValidDto) {
+            Optional<Member> result = memberInfoRepository.findByMemberId(memberInfo.getMemberId());
+
+            if (result.isEmpty()) {
+                invalidMember.add(memberInfo);
+                continue;
+            }
+
+            Member member = result.get();
+
+            if (member.isDeleted() || !member.getClassId().equals(memberInfo.getClassId())) {
+                invalidMember.add(memberInfo);
+            } else {
+                validMember.add(memberInfo);
+            }
+        }
+
+
+        return TraineeList.convertLists(validMember, invalidMember);
+    }
 }

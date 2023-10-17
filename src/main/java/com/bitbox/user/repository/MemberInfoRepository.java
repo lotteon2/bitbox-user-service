@@ -24,6 +24,7 @@ public interface MemberInfoRepository extends CrudRepository<Member, String> {
      */
     Optional<Member> findByMemberIdAndDeletedIsFalse(String memberId);
 
+    Optional<Member> findByMemberId(String memberId);
 
     /**
      * 회원정보 조회(관리자)

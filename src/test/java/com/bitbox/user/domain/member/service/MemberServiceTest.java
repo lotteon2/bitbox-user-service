@@ -1,16 +1,22 @@
 package com.bitbox.user.domain.member.service;
 
 import com.bitbox.user.dto.MemberInfoUpdateDto;
+import com.bitbox.user.dto.MemberValidDto;
+import com.bitbox.user.repository.MemberInfoRepository;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InvalidMemberIdException;
+import com.bitbox.user.service.response.TraineeList;
 import io.github.bitbox.bitbox.dto.MemberRegisterDto;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -20,6 +26,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class MemberServiceTest {
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private MemberInfoRepository memberInfoRepository;
 
     private MemberRegisterDto memberDto;
     private Member member;
@@ -31,6 +40,7 @@ public class MemberServiceTest {
                 .email("indl1670@naver.com")
                 .profileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
                 .authority(AuthorityType.TRAINEE)
+                .classId(1L)
                 .build();
 
         member =  memberService.registMemberInfo(memberDto);
@@ -103,6 +113,58 @@ public class MemberServiceTest {
         Boolean result = memberService.withdrawMember(member.getMemberId());
 
         assertThat(result).isTrue();
+    }
+
+    @DisplayName("교육생 회원정보 유효성 검사")
+    @Order(7)
+    @Test
+    void validTest() {
+        memberDto = MemberRegisterDto.builder()
+                .name("김정윤")
+                .email("1@naver.com")
+                .profileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
+                .authority(AuthorityType.TRAINEE)
+                .classId(1L)
+                .build();
+
+        Member member2 =  memberService.registMemberInfo(memberDto);
+
+        memberDto = MemberRegisterDto.builder()
+                .name("김정윤")
+                .email("2@naver.com")
+                .profileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
+                .authority(AuthorityType.TRAINEE)
+                .classId(2L)
+                .build();
+
+        Member member3 =  memberService.registMemberInfo(memberDto);
+
+        memberDto = MemberRegisterDto.builder()
+                .name("김정윤")
+                .email("3@naver.com")
+                .profileImg("https://mblogthumb-phinf.pstatic.net/MjAyMDExMDFfMTgy/MDAxNjA0MjI4ODc1NDMw.Ex906Mv9nnPEZGCh4SREknadZvzMO8LyDzGOHMKPdwAg.ZAmE6pU5lhEdeOUsPdxg8-gOuZrq_ipJ5VhqaViubI4g.JPEG.gambasg/%EC%9C%A0%ED%8A%9C%EB%B8%8C_%EA%B8%B0%EB%B3%B8%ED%94%84%EB%A1%9C%ED%95%84_%ED%95%98%EB%8A%98%EC%83%89.jpg?type=w800")
+                .authority(AuthorityType.TRAINEE)
+                .classId(1L)
+                .build();
+
+        Member member4 =  memberService.registMemberInfo(memberDto);
+        memberService.withdrawMember(member4.getMemberId());
+
+
+        List<MemberValidDto> memberValidDto = new ArrayList<>();
+        memberValidDto.add(MemberValidDto.builder().memberId(member.getMemberId()).classId(1L).build());
+        memberValidDto.add(MemberValidDto.builder().memberId(member2.getMemberId()).classId(1L).build());
+        memberValidDto.add(MemberValidDto.builder().memberId(member3.getMemberId()).classId(1L).build());
+        memberValidDto.add(MemberValidDto.builder().memberId("test").classId(1L).build());
+        memberValidDto.add(MemberValidDto.builder().memberId(member4.getMemberId()).classId(1L).build());
+
+        TraineeList result = memberService.checkMemberValid(memberValidDto);
+        int valid = result.getValidMember().size();
+        int invalid = result.getInvalidMember().size();
+
+        assertThat(valid).isEqualTo(2);
+        assertThat(invalid).isEqualTo(3);
+
     }
 
 }
