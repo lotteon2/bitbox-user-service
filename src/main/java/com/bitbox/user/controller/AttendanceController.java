@@ -56,7 +56,7 @@ public class AttendanceController {
     /**
      * 입실 체크
      */
-    @PatchMapping("/mypage/attendance/entrance/{attendanceId}")
+    @PatchMapping("/mypage/attendance/entrance")
     public ResponseEntity<AttendanceStatus> memberEntrance(@RequestHeader String memberId, @Valid @RequestBody CurrentLocationDto currentLocationDto) {
         return ResponseEntity.ok(attendanceService.memberEntrance(memberId, currentLocationDto));
     }
@@ -64,7 +64,7 @@ public class AttendanceController {
     /**
      * 퇴실 체크
      */
-    @PatchMapping("/mypage/attendance/quit/{attendanceId}")
+    @PatchMapping("/mypage/attendance/quit")
     public ResponseEntity<AttendanceStatus> memberQuit(@RequestHeader String memberId, @Valid @RequestBody CurrentLocationDto currentLocationDto) {
         attendanceService.memberQuit(memberId, currentLocationDto);
         return ResponseEntity.ok().build();
