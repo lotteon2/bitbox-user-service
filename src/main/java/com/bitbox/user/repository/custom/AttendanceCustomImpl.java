@@ -1,12 +1,9 @@
 package com.bitbox.user.repository.custom;
 
 import com.bitbox.user.domain.Attendance;
-import com.bitbox.user.domain.QMember;
-import com.bitbox.user.domain.QReasonStatement;
 import com.bitbox.user.service.response.MemberInfoWithAttendance;
 import com.bitbox.user.service.response.QMemberInfoWithAttendance;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +22,6 @@ public class AttendanceCustomImpl implements AttendanceCustom{
     public Optional<Attendance> findByIdFetch(Long id) {
         return Optional.ofNullable(
                 query.selectFrom(attendance)
-                        //.join(attendance.member).fetchJoin()
                         .where(attendance.attendanceId.eq(id))
                         .fetchOne());
     }

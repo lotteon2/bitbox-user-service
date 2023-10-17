@@ -1,12 +1,12 @@
 package com.bitbox.user.controller;
 import com.bitbox.user.domain.Member;
+import com.bitbox.user.dto.MemberInfoUpdateDto;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
 import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
 import io.github.bitbox.bitbox.dto.MemberCreditDto;
 import io.github.bitbox.bitbox.dto.MemberRegisterDto;
 import io.github.bitbox.bitbox.enums.AuthorityType;
-import io.github.bitbox.bitbox.jwt.JwtPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,6 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
-@CrossOrigin("*")
 public class MemberController {
     private final MemberService memberService;
 
@@ -31,6 +30,11 @@ public class MemberController {
         return ResponseEntity.ok(memberService.registMemberInfo(memberDto).getMemberId());
     }
 
+    @PatchMapping("/name")
+    public ResponseEntity<Void> registTraineeName(@RequestHeader String memberId, @RequestBody String memberName) {
+        memberService.AddTraineeName(memberId, memberName);
+        return ResponseEntity.ok().build();
+    }
     /**
      * 회원정보 조회(일반 회원)
      */
@@ -51,8 +55,8 @@ public class MemberController {
      * 내 정보 수정
      */
     @PatchMapping("/mypage")
-    public ResponseEntity<Member> updateMemberInfo(@RequestHeader String memberId, @RequestBody String memberProfileImg) {
-        return ResponseEntity.ok(memberService.updateMemberInfo(memberId, memberProfileImg));
+    public ResponseEntity<Member> updateMemberInfo(@RequestHeader String memberId, @RequestBody MemberInfoUpdateDto memberInfoUpdateDto) {
+        return ResponseEntity.ok(memberService.updateMemberInfo(memberId, memberInfoUpdateDto));
     }
 
     /**

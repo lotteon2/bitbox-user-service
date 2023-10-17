@@ -7,20 +7,17 @@ import com.bitbox.user.service.AttendanceService;
 import com.bitbox.user.service.response.AvgAttendanceInfo;
 import com.bitbox.user.service.response.MemberInfoWithAttendance;
 import io.github.bitbox.bitbox.enums.AttendanceStatus;
-import io.github.bitbox.bitbox.jwt.JwtPayload;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.ws.rs.PathParam;
 import java.time.LocalDate;
 import java.util.List;
 
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
-@CrossOrigin("*")
 public class AttendanceController {
     private final AttendanceService attendanceService;
 

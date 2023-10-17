@@ -2,7 +2,6 @@ package com.bitbox.user.service.response;
 
 import com.querydsl.core.annotations.QueryProjection;
 import io.github.bitbox.bitbox.enums.AttendanceStatus;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;

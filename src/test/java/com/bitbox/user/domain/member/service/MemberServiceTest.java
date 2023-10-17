@@ -1,5 +1,6 @@
 package com.bitbox.user.domain.member.service;
 
+import com.bitbox.user.dto.MemberInfoUpdateDto;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.exception.DuplicationEmailException;
@@ -89,7 +90,8 @@ public class MemberServiceTest {
     @Order(5)
     @Test
     void updateTest() {
-        Member infoResult = memberService.updateMemberInfo(member.getMemberId(), "test.png");
+        MemberInfoUpdateDto updateInfo = MemberInfoUpdateDto.builder().memberNickname("testNickname").memberProfileImg("test.png").build();
+        Member infoResult = memberService.updateMemberInfo(member.getMemberId(), updateInfo);
 
         assertThat(infoResult).isNotNull();
     }

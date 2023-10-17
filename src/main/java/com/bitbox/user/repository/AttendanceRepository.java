@@ -3,7 +3,6 @@ package com.bitbox.user.repository;
 import com.bitbox.user.domain.Attendance;
 import com.bitbox.user.repository.custom.AttendanceCustom;
 import com.bitbox.user.service.response.AvgAttendanceInfo;
-import com.bitbox.user.service.response.MemberInfoWithAttendance;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
