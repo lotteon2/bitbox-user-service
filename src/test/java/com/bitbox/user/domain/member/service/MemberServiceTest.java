@@ -1,14 +1,13 @@
 package com.bitbox.user.domain.member.service;
 
 import com.bitbox.user.dto.MemberInfoUpdateDto;
-import com.bitbox.user.dto.MemberValidDto;
-import com.bitbox.user.repository.MemberInfoRepository;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InvalidMemberIdException;
-import com.bitbox.user.service.response.TraineeList;
 import io.github.bitbox.bitbox.dto.MemberRegisterDto;
+import io.github.bitbox.bitbox.dto.MemberTraineeResult;
+import io.github.bitbox.bitbox.dto.MemberValidDto;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +25,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 public class MemberServiceTest {
     @Autowired
     private MemberService memberService;
-
-    @Autowired
-    private MemberInfoRepository memberInfoRepository;
 
     private MemberRegisterDto memberDto;
     private Member member;
@@ -158,7 +154,7 @@ public class MemberServiceTest {
         memberValidDto.add(MemberValidDto.builder().memberId("test").classId(1L).build());
         memberValidDto.add(MemberValidDto.builder().memberId(member4.getMemberId()).classId(1L).build());
 
-        TraineeList result = memberService.checkMemberValid(memberValidDto);
+        MemberTraineeResult result = memberService.checkMemberValid(memberValidDto);
         int valid = result.getValidMember().size();
         int invalid = result.getInvalidMember().size();
 

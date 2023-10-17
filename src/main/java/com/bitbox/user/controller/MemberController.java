@@ -1,13 +1,9 @@
 package com.bitbox.user.controller;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.dto.MemberInfoUpdateDto;
-import com.bitbox.user.dto.MemberValidDto;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
-import com.bitbox.user.service.response.TraineeList;
-import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
-import io.github.bitbox.bitbox.dto.MemberCreditDto;
-import io.github.bitbox.bitbox.dto.MemberRegisterDto;
+import io.github.bitbox.bitbox.dto.*;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -46,7 +42,7 @@ public class MemberController {
      * 교육생 유효성 검사
      */
     @GetMapping("/admin/check")
-    public ResponseEntity<TraineeList> checkMemberValid(@RequestBody List<MemberValidDto> memberValidDto) {
+    public ResponseEntity<MemberTraineeResult> checkMemberValid(@RequestBody List<MemberValidDto> memberValidDto) {
         return ResponseEntity.ok(memberService.checkMemberValid(memberValidDto));
     }
 

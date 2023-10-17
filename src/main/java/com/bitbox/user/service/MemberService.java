@@ -2,17 +2,12 @@ package com.bitbox.user.service;
 
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.dto.MemberInfoUpdateDto;
-import com.bitbox.user.dto.MemberValidDto;
 import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InSufficientCreditException;
 import com.bitbox.user.exception.InvalidMemberIdException;
 import com.bitbox.user.repository.MemberInfoRepository;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
-import com.bitbox.user.service.response.TraineeList;
-import io.github.bitbox.bitbox.dto.MemberAuthorityDto;
-import io.github.bitbox.bitbox.dto.MemberCreditDto;
-import io.github.bitbox.bitbox.dto.MemberPaymentDto;
-import io.github.bitbox.bitbox.dto.MemberRegisterDto;
+import io.github.bitbox.bitbox.dto.*;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -196,7 +191,7 @@ public class MemberService {
     }
 
 
-    public TraineeList checkMemberValid(List<MemberValidDto> memberValidDto) {
+    public MemberTraineeResult checkMemberValid(List<MemberValidDto> memberValidDto) {
         List<MemberValidDto> validMember = new ArrayList<>();
         List<MemberValidDto> invalidMember = new ArrayList<>();
 
@@ -218,6 +213,6 @@ public class MemberService {
         }
 
 
-        return TraineeList.convertLists(validMember, invalidMember);
+        return MemberTraineeResult.builder().validMember(validMember).invalidMember(invalidMember).build();
     }
 }
