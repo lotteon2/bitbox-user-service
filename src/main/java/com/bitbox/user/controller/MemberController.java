@@ -18,7 +18,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
-@CrossOrigin("*")
 public class MemberController {
     private final MemberService memberService;
 
@@ -111,9 +110,10 @@ public class MemberController {
     /**
      * 크레딧 소모
      */
-    @PatchMapping("/credit")
-    public ResponseEntity<Long> useMyCredit(@RequestBody MemberCreditDto memberCreditDto) {
-        return ResponseEntity.ok(memberService.useMyCredit(memberCreditDto));
+    @PutMapping("/credit")
+    public ResponseEntity<Void> useMyCredit(@RequestBody MemberCreditDto memberCreditDto) {
+        memberService.useMyCredit(memberCreditDto);
+        return ResponseEntity.ok().build();
     }
 
 
