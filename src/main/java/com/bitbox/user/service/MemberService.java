@@ -191,6 +191,11 @@ public class MemberService {
     }
 
 
+    /**
+     * 교육생 유효성 검사
+     * @param memberValidDto
+     * @return
+     */
     public MemberTraineeResult checkMemberValid(List<MemberValidDto> memberValidDto) {
         List<MemberValidDto> validMember = new ArrayList<>();
         List<MemberValidDto> invalidMember = new ArrayList<>();
@@ -214,5 +219,14 @@ public class MemberService {
 
 
         return MemberTraineeResult.builder().validMember(validMember).invalidMember(invalidMember).build();
+    }
+
+    @Transactional
+    public void modifyAuthorityByClassId(Long classId, AuthorityType type) {
+        List<Member> traineeList = memberInfoRepository.findAllByClassId(classId);
+
+        for (Member trainee: traineeList) {
+            trainee.setMemberAuthority(type);
+        }
     }
 }

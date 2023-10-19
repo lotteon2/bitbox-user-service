@@ -8,6 +8,7 @@ import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -17,13 +18,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/member")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class MemberController {
     private final MemberService memberService;
 
     /**
      * 회원가입
      */
-//    @KafkaListener(topics = "")
+    @KafkaListener(topics = "${registerTopic}")
     @PostMapping("/signup")
     public ResponseEntity<String> registMemberInfo(@Valid @RequestBody MemberRegisterDto memberDto) {
         return ResponseEntity.ok(memberService.registMemberInfo(memberDto).getMemberId());
@@ -41,7 +43,7 @@ public class MemberController {
     /**
      * 교육생 유효성 검사
      */
-    @GetMapping("/admin/check")
+    @PostMapping("/admin/check")
     public ResponseEntity<MemberTraineeResult> checkMemberValid(@RequestBody List<MemberValidDto> memberValidDto) {
         return ResponseEntity.ok(memberService.checkMemberValid(memberValidDto));
     }
@@ -76,6 +78,25 @@ public class MemberController {
     @PatchMapping("/admin")
     public ResponseEntity<AuthorityType> updateMemberInfo(@RequestBody MemberAuthorityDto memberAuthorityDto) {
         return ResponseEntity.ok(memberService.modifyMemberInfo(memberAuthorityDto));
+    }
+
+    /**
+     * 반 삭제
+     */
+    @KafkaListener(topics = "${deleteTopic}")
+    @PatchMapping("/admin/delete")
+    public ResponseEntity<Void> deletedClass(@RequestBody Long classId) {
+        memberService.modifyAuthorityByClassId(classId, AuthorityType.GENERAL);
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * 반 수료
+     */
+    @PatchMapping("/admin/graduate/{classId}")
+    public ResponseEntity<Void> graduateClass(@PathVariable Long classId) {
+        memberService.modifyAuthorityByClassId(classId, AuthorityType.GRADUATE);
+        return ResponseEntity.ok().build();
     }
 
     /**

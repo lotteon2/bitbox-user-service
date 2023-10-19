@@ -4,6 +4,8 @@ import com.bitbox.user.domain.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
 import java.util.Optional;
 
 
@@ -32,6 +34,13 @@ public interface MemberInfoRepository extends CrudRepository<Member, String> {
      * @return MemberInfoResponse
      */
     Page<Member> findAllByClassIdOrderByMemberNickname(Long classId, Pageable paging);
+
+    /**
+     * 반 삭제 카프카
+     * @param classId
+     * @return
+     */
+    List<Member> findAllByClassId(Long classId);
 
 //    List<Member> findAllAndDeletedIsFalse();
 
