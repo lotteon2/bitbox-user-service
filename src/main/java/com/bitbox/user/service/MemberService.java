@@ -90,7 +90,7 @@ public class MemberService {
      */
     public MemberInfoWithCountResponse getTraineeInfo(Long classId, Pageable paging) {
         Page<Member> traineeList = memberInfoRepository.findAllByClassIdOrderByMemberNickname(classId, paging);
-        return MemberInfoWithCountResponse.builder().memberInfoList(traineeList.getContent()).totalCount(memberInfoRepository.count()).build();
+        return MemberInfoWithCountResponse.builder().memberInfoList(traineeList.getContent()).totalCount(memberInfoRepository.countMemberByClassId(classId)).build();
     }
 
     /**

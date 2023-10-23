@@ -38,6 +38,12 @@ public interface MemberInfoRepository extends CrudRepository<Member, String> {
     Page<Member> findAllByClassIdOrderByMemberNickname(Long classId, Pageable paging);
 
     /**
+     * 회원정보 조회 전체 학생 수
+     */
+    @Query(value = "SELECT count(m) FROM Member m WHERE m.classId = :classId AND m.memberAuthority = 'TRAINEE'")
+    Long countMemberByClassId(Long classId);
+
+    /**
      * 반 삭제 카프카
      * @param classId
      * @return
