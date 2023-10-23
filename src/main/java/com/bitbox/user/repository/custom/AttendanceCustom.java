@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface AttendanceCustom {
     Optional<Attendance> findByIdFetch(Long id);
 
-    List<MemberInfoWithAttendance> findByClassIdForAdmin(Long classId, LocalDate current, String memberNickname);
+    List<MemberInfoWithAttendance> findByClassIdForAdmin(Long classId, LocalDate current, String memberName);
 }

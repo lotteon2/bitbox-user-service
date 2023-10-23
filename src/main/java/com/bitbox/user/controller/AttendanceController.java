@@ -41,8 +41,8 @@ public class AttendanceController {
      * 출결 리스트 조회(관리자)
      */
     @GetMapping("/admin/attendance/{classId}")
-    public ResponseEntity<List<MemberInfoWithAttendance>> getAllAttendance(@PathVariable Long classId, @RequestParam(required = false) LocalDate current, @RequestParam(required = false) String memberNickname) {
-        return ResponseEntity.ok(attendanceService.getAttendanceForAdmin(classId, current, memberNickname));
+    public ResponseEntity<List<MemberInfoWithAttendance>> getAllAttendance(@PathVariable Long classId, @RequestParam(required = false) LocalDate current, @RequestParam(required = false) String memberName) {
+        return ResponseEntity.ok(attendanceService.getAttendanceForAdmin(classId, current, memberName));
     }
 
     /**

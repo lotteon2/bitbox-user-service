@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class MemberInfoWithAttendance {
     private String memberId;
     private String memberProfileImg;
-    private String memberNickname;
+    private String memberName;
     private Long attendanceId;
     private LocalDate attendanceDate;
     private String entrace;
@@ -25,10 +25,10 @@ public class MemberInfoWithAttendance {
 
     @Builder
     @QueryProjection
-    public MemberInfoWithAttendance(String memberId, String memberProfileImg, String memberNickname, Long attendanceId, LocalDate attendanceDate, String entrace, String quit, AttendanceStatus attendanceState, String attendanceModifyReason, String reasonTitle) {
+    public MemberInfoWithAttendance(String memberId, String memberProfileImg, String memberName, Long attendanceId, LocalDate attendanceDate, String entrace, String quit, AttendanceStatus attendanceState, String attendanceModifyReason, String reasonTitle) {
         this.memberId = memberId;
         this.memberProfileImg = memberProfileImg;
-        this.memberNickname = memberNickname;
+        this.memberName = memberName;
         this.attendanceId = attendanceId;
         this.attendanceDate = attendanceDate;
         this.entrace = entrace;
