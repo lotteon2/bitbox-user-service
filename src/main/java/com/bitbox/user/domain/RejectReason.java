@@ -1,21 +1,29 @@
 package com.bitbox.user.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "reject_reason")
+@Getter
+@Setter
+@Table(name="reject_reason")
 @DynamicInsert
+@DynamicUpdate
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class RejectReason {
     @Id
     private Long id;
 
-    @JsonIgnore
     @MapsId
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reason_statement_id", nullable = false)
+    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "id")
     private ReasonStatement reasonStatement;
 
     @Column(name = "reject_reason", nullable = false)

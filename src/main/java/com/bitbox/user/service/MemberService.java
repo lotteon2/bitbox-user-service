@@ -227,6 +227,7 @@ public class MemberService {
 
         for (Member trainee: traineeList) {
             trainee.setMemberAuthority(type);
+            trainee.setClassId(null);
         }
     }
 }
