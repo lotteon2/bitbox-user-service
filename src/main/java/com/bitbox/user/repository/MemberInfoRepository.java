@@ -3,6 +3,7 @@ package com.bitbox.user.repository;
 import com.bitbox.user.domain.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -33,6 +34,7 @@ public interface MemberInfoRepository extends CrudRepository<Member, String> {
      * @param classId
      * @return MemberInfoResponse
      */
+    @Query(value = "SELECT m FROM Member m WHERE m.classId = :classId AND m.memberAuthority = 'TRAINEE' ORDER BY m.memberName")
     Page<Member> findAllByClassIdOrderByMemberNickname(Long classId, Pageable paging);
 
     /**
