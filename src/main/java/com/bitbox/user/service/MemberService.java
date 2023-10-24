@@ -226,8 +226,14 @@ public class MemberService {
         List<Member> traineeList = memberInfoRepository.findAllByClassId(classId);
 
         for (Member trainee: traineeList) {
-            trainee.setMemberAuthority(type);
-            trainee.setClassId(null);
+            try {
+                trainee.setMemberAuthority(type);
+                trainee.setClassId(null);
+            } catch (Exception e) {
+                log.error("adminMemberBoardTopic Error" + trainee.getMemberId());
+                throw e;
+            }
+
         }
     }
 }
