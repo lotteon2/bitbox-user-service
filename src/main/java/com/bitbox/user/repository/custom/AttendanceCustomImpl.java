@@ -28,7 +28,7 @@ public class AttendanceCustomImpl implements AttendanceCustom{
 
     @Override
     public List<MemberInfoWithAttendance> findByClassIdForAdmin(Long classId, LocalDate current, String memberName) {
-        List<MemberInfoWithAttendance> fetch = query.select(new QMemberInfoWithAttendance(member.memberId, member.memberProfileImg, member.memberName, attendance.attendanceId, attendance.attendanceDate, attendance.attendanceDate.stringValue().concat(" ").concat(attendance.entraceTime.stringValue()).as("entrace") , attendance.attendanceDate.stringValue().concat(" ").concat(attendance.quitTime.stringValue()).as("quit"), attendance.attendanceState, attendance.attendanceModifyReason, reasonStatement.reasonTitle))
+        List<MemberInfoWithAttendance> fetch = query.select(new QMemberInfoWithAttendance(member.memberId, member.memberProfileImg, member.memberName, attendance.attendanceId, attendance.attendanceDate, attendance.entraceTime.stringValue(), attendance.quitTime.stringValue(), attendance.attendanceState, attendance.attendanceModifyReason, reasonStatement.reasonTitle))
                 .from(attendance)
                 .innerJoin(attendance.member, member)
                 .leftJoin(reasonStatement)
