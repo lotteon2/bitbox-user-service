@@ -1,6 +1,7 @@
 package com.bitbox.user.controller;
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.dto.MemberInfoUpdateDto;
+import com.bitbox.user.dto.TraineeUpdateDto;
 import com.bitbox.user.service.MemberService;
 import com.bitbox.user.service.response.MemberInfoWithCountResponse;
 import io.github.bitbox.bitbox.dto.*;
@@ -31,11 +32,11 @@ public class MemberController {
     }
 
     /**
-     * 교육생 이름 등록
+     * 교육생 정보 등록
      */
     @PatchMapping("/name")
-    public ResponseEntity<Void> registTraineeName(@RequestHeader String memberId, @RequestBody String memberName) {
-        memberService.AddTraineeName(memberId, memberName);
+    public ResponseEntity<Void> registTraineeInfo(@RequestHeader String memberId, @RequestBody TraineeUpdateDto traineeUpdateDto) {
+        memberService.AddTraineeName(memberId, traineeUpdateDto);
         return ResponseEntity.ok().build();
     }
 
