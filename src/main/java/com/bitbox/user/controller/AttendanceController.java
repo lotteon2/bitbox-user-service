@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -43,7 +45,8 @@ public class AttendanceController {
      */
     @GetMapping("/admin/attendance/{classId}")
     public ResponseEntity<List<MemberInfoWithAttendance>> getAllAttendance(@PathVariable Long classId, @RequestParam(required = false) String current, @RequestParam(required = false) String memberName) {
-        return ResponseEntity.ok(attendanceService.getAttendanceForAdmin(classId, LocalDate.parse(current, DateTimeFormatter.ISO_DATE), memberName));
+
+        return ResponseEntity.ok(attendanceService.getAttendanceForAdmin(classId, current, memberName == null ? memberName : URLDecoder.decode(memberName, StandardCharsets.UTF_8)));
     }
 
     /**
