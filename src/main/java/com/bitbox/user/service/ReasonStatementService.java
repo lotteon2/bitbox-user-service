@@ -1,5 +1,6 @@
 package com.bitbox.user.service;
 
+import com.bitbox.user.domain.Attendance;
 import com.bitbox.user.domain.ReasonStatement;
 import com.bitbox.user.domain.RejectReason;
 import com.bitbox.user.dto.ReasonStatementRegisterDto;
@@ -8,6 +9,7 @@ import com.bitbox.user.repository.AttendanceRepository;
 import com.bitbox.user.repository.MemberInfoRepository;
 import com.bitbox.user.repository.ReasonStatementRepository;
 import com.bitbox.user.repository.RejectReasonRepository;
+import com.bitbox.user.service.response.ReasonStatementWithAttendanceAndMember;
 import com.bitbox.user.service.response.ReasonStatementsWithCountResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,15 +35,7 @@ public class ReasonStatementService {
      */
     @Transactional
     public ReasonStatement registReasonStatement(String memberId, ReasonStatementRegisterDto reasonStatementRegisterDto) {
-        ReasonStatement result = ReasonStatement.builder()
-                .attendance(attendanceRepository.findByAttendanceId(reasonStatementRegisterDto.getAttendanceId()))
-                .reasonTitle(reasonStatementRegisterDto.getReasonTitle())
-                .reasonContent(reasonStatementRegisterDto.getReasonContent())
-                .reasonAttachedFile(reasonStatementRegisterDto.getReasonAttachedFile())
-                .member(memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberId).orElseThrow())
-                .build();
-
-        return reasonStatementRepository.save(result);
+        return checkReasonStatement(memberId, reasonStatementRegisterDto);
     }
 
     /**
@@ -51,7 +45,7 @@ public class ReasonStatementService {
      * @return
      */
     public ReasonStatementsWithCountResponse getReasonStatements(Long classId, Pageable paging) {
-        Page<ReasonStatement> statementList = reasonStatementRepository.findAllByClassIdOrderByReasonStatementId(classId, paging);
+        Page<ReasonStatementWithAttendanceAndMember> statementList = reasonStatementRepository.findAllByClassIdOrderByReasonStatementId(classId, paging);
 
         return ReasonStatementsWithCountResponse.builder().reasonStatements(statementList.getContent()).totalCount(reasonStatementRepository.countByClassId(classId)).build();
     }
@@ -83,4 +77,26 @@ public class ReasonStatementService {
         rejectReasonRepository.save(test);
     }
 
+    private ReasonStatement checkReasonStatement(String memberId, ReasonStatementRegisterDto reasonStatementRegisterDto) {
+        ReasonStatement statement = reasonStatementRepository.findByAttendance_AttendanceId(reasonStatementRegisterDto.getAttendanceId());
+
+        // 신규면 등록
+        if (statement == null) {
+            ReasonStatement result = ReasonStatement.builder()
+                    .attendance(attendanceRepository.findByAttendanceId(reasonStatementRegisterDto.getAttendanceId()))
+                    .reasonTitle(reasonStatementRegisterDto.getReasonTitle())
+                    .reasonContent(reasonStatementRegisterDto.getReasonContent())
+                    .reasonAttachedFile(reasonStatementRegisterDto.getReasonAttachedFile())
+                    .member(memberInfoRepository.findByMemberIdAndDeletedIsFalse(memberId).orElseThrow())
+                    .build();
+
+            return reasonStatementRepository.save(result);
+        }
+
+        // 이미 존재하면 수정
+        statement.setReasonTitle(reasonStatementRegisterDto.getReasonTitle());
+        statement.setReasonContent(reasonStatementRegisterDto.getReasonContent());
+        statement.setReasonAttachedFile(reasonStatementRegisterDto.getReasonAttachedFile());
+        return statement;
+    }
 }

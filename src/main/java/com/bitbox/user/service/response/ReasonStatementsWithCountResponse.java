@@ -9,6 +9,6 @@ import java.util.List;
 @Builder
 @Getter
 public class ReasonStatementsWithCountResponse {
-    List<ReasonStatement> reasonStatements;
+    List<ReasonStatementWithAttendanceAndMember> reasonStatements;
     Long totalCount;
 }
