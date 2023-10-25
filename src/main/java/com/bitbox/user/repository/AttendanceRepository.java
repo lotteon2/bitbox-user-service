@@ -5,6 +5,7 @@ import com.bitbox.user.repository.custom.AttendanceCustom;
 import com.bitbox.user.service.response.AvgAttendanceInfo;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,10 +27,10 @@ public interface AttendanceRepository extends CrudRepository<Attendance, Long> ,
             "FROM Attendance a INNER JOIN Member m ON a.member.memberId = m.memberId " +
             "WHERE m.classId = :classId AND a.attendanceState = 'ATTENDANCE' AND a.attendanceDate BETWEEN :before AND :after " +
             "GROUP BY a.attendanceDate")
-    List<AvgAttendanceInfo> findByClassIdForAdminDashBoard(long classId, LocalDate before, LocalDate after);
+    List<AvgAttendanceInfo> findByClassIdForAdminDashBoard(@Param("classId") long classId, @Param("before") LocalDate before, @Param("after") LocalDate after);
 
 
     @Query(value = "SELECT a FROM Attendance a " +
             "WHERE a.member.memberId = :memberId AND a.attendanceDate = :attendanceDate")
-    Attendance findByMemberIdAndAttendanceDate(String memberId, LocalDate attendanceDate);
+    Attendance findByMemberIdAndAttendanceDate(@Param("memberId") String memberId, @Param("attendanceDate") LocalDate attendanceDate);
 }

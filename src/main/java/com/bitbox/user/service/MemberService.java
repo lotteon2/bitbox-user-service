@@ -2,6 +2,7 @@ package com.bitbox.user.service;
 
 import com.bitbox.user.domain.Member;
 import com.bitbox.user.dto.MemberInfoUpdateDto;
+import com.bitbox.user.dto.TraineeUpdateDto;
 import com.bitbox.user.exception.DuplicationEmailException;
 import com.bitbox.user.exception.InSufficientCreditException;
 import com.bitbox.user.exception.InvalidMemberIdException;
@@ -62,13 +63,15 @@ public class MemberService {
     }
 
     /**
-     * 교육생 이름 등록
+     * 교육생 정보 등록
      * @param memberId
-     * @param memberName
+     * @param traineeUpdateDto
      */
     @Transactional
-    public void AddTraineeName(String memberId, String memberName) {
-        findByMemberId(memberId).setMemberName(memberName);
+    public void AddTraineeName(String memberId, TraineeUpdateDto traineeUpdateDto) {
+        Member result = findByMemberId(memberId);
+        result.setMemberName(traineeUpdateDto.getName());
+        result.setClassId(traineeUpdateDto.getClassId());
     }
 
     /**
@@ -90,7 +93,7 @@ public class MemberService {
      */
     public MemberInfoWithCountResponse getTraineeInfo(Long classId, Pageable paging) {
         Page<Member> traineeList = memberInfoRepository.findAllByClassIdOrderByMemberNickname(classId, paging);
-        return MemberInfoWithCountResponse.builder().memberInfoList(traineeList.getContent()).totalCount(memberInfoRepository.count()).build();
+        return MemberInfoWithCountResponse.builder().memberInfoList(traineeList.getContent()).totalCount(memberInfoRepository.countMemberByClassId(classId)).build();
     }
 
     /**
@@ -226,7 +229,14 @@ public class MemberService {
         List<Member> traineeList = memberInfoRepository.findAllByClassId(classId);
 
         for (Member trainee: traineeList) {
-            trainee.setMemberAuthority(type);
+            try {
+                trainee.setMemberAuthority(type);
+                trainee.setClassId(null);
+            } catch (Exception e) {
+                log.error("adminMemberBoardTopic Error" + trainee.getMemberId());
+                throw e;
+            }
+
         }
     }
 }

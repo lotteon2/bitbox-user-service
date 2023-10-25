@@ -1,13 +1,23 @@
 package com.bitbox.user.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.github.bitbox.bitbox.enums.ReasonStatementStatus;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "reason_statement")
+@Getter
+@Setter
+@Table(name="reason_statement")
 @DynamicInsert
+@DynamicUpdate
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ReasonStatement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,10 +34,6 @@ public class ReasonStatement {
     @JoinColumn(name = "attendance_id", nullable = false)
     private Attendance attendance;
 
-    @JsonIgnore
-    @OneToOne(mappedBy = "reasonStatement", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private RejectReason rejectReason;
-
     @Column(name = "reason_title", nullable = false)
     private String reasonTitle;
 
@@ -37,9 +43,12 @@ public class ReasonStatement {
     @Column(name = "reason_attached_file")
     private String reasonAttachedFile;
 
+    @Enumerated(EnumType.STRING)
+    @ColumnDefault("'SUBMIT'")
     @Column(name = "reason_state", nullable = false)
-    private boolean reasonState;
+    private ReasonStatementStatus reasonState;
 
-    @Column(name = "is_read", nullable = false)
+    @ColumnDefault("false")
+    @Column(name = "is_read", nullable = false, columnDefinition = "TINYINT(1)")
     private boolean read;
 }

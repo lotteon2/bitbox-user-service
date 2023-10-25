@@ -80,8 +80,8 @@ public class AttendanceService {
      * @param classId
      * @return
      */
-    public List<MemberInfoWithAttendance> getAttendanceForAdmin(long classId, LocalDate current, String memberNickname) {
-        return attendanceRepository.findByClassIdForAdmin(classId, current, memberNickname);
+    public List<MemberInfoWithAttendance> getAttendanceForAdmin(long classId, LocalDate current, String memberName) {
+        return attendanceRepository.findByClassIdForAdmin(classId, current, memberName);
     }
 
     /**
