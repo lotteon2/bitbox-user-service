@@ -27,7 +27,7 @@ public class AttendanceCustomImpl implements AttendanceCustom{
     }
 
     @Override
-    public List<MemberInfoWithAttendance> findByClassIdForAdmin(Long classId, LocalDate current, String memberName) {
+    public List<MemberInfoWithAttendance> findByClassIdForAdmin(Long classId, String current, String memberName) {
         List<MemberInfoWithAttendance> fetch = query.select(new QMemberInfoWithAttendance(member.memberId, member.memberProfileImg, member.memberName, attendance.attendanceId, attendance.attendanceDate, attendance.entraceTime.stringValue(), attendance.quitTime.stringValue(), attendance.attendanceState, attendance.attendanceModifyReason, reasonStatement.reasonTitle))
                 .from(attendance)
                 .innerJoin(attendance.member, member)
@@ -46,7 +46,7 @@ public class AttendanceCustomImpl implements AttendanceCustom{
         }
         return member.memberNickname.contains(memberName);
     }
-    private BooleanExpression attendanceEq(LocalDate current) {
-        return current != null ? attendance.attendanceDate.eq(current) : null;
+    private BooleanExpression attendanceEq(String current) {
+        return current != null ? attendance.attendanceDate.eq(LocalDate.parse(current)) : null;
     }
 }

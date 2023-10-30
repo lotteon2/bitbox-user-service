@@ -148,7 +148,7 @@ public class MemberService {
             throw new InSufficientCreditException("크레딧이 부족합니다. 충전 후 이용해주세요.");
         }
 
-        memberInfo.setMemberCredit(memberInfo.getMemberCredit() + memberCreditDto.getCredit());
+        memberInfo.setMemberCredit(memberInfo.getMemberCredit() - memberCreditDto.getCredit());
         return memberInfo.getMemberCredit();
     }
 
