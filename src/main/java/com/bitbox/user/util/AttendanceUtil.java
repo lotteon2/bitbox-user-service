@@ -20,7 +20,7 @@ public class AttendanceUtil {
     public static final LocalTime AFTER_ATTENDANCE_TIME_QUIT = LocalTime.of(22, 30, 0);
 
     public static void checkLocation(double lat, double lng) {
-        if (Math.pow(0.0005, 2) <= (Math.pow(BIT_CENTER_LAT - lat, 2) + Math.pow(BIT_CENTER_LNG - lng, 2)) || (Math.pow(BIT_CENTER_LAT - lat, 2) + Math.pow(BIT_CENTER_LNG - lng, 2) == 0)) {
+        if (Math.pow(0.0005, 2) <= (Math.pow(BIT_CENTER_LAT - Math.round(lat*100)/100.0, 2) + Math.pow(BIT_CENTER_LNG - Math.round(lng*100)/100.0, 2))) {
             throw new InvalidRangeAttendanceException("교육장과 멀리 떨어져 있습니다.");
         }
     }
