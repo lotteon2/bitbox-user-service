@@ -45,7 +45,7 @@ public class ReasonStatement {
 
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'SUBMIT'")
-    @Column(name = "reason_state", nullable = false)
+    @Column(name = "reason_state", nullable = false, columnDefinition = "VARCHAR(255)")
     private ReasonStatementStatus reasonState;
 
     @ColumnDefault("false")
