@@ -18,12 +18,12 @@ import javax.persistence.*;
 @Builder
 public class RejectReason {
     @Id
-    private Long id;
+    private Long reasonStatementId;
 
     @MapsId
     @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "reason_statement_id")
     private ReasonStatement reasonStatement;
 
     @Column(name = "reject_reason", nullable = false)
