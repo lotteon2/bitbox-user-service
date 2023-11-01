@@ -72,6 +72,7 @@ public class MemberService {
         Member result = findByMemberId(memberId);
         result.setMemberName(traineeUpdateDto.getName());
         result.setClassId(traineeUpdateDto.getClassId());
+        result.setMemberAuthority(AuthorityType.TRAINEE);
     }
 
     /**
