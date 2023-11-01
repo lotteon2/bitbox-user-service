@@ -23,9 +23,9 @@ public interface AttendanceRepository extends CrudRepository<Attendance, Long> ,
      * @param after
      * @return
      */
-    @Query(value = "SELECT new com.bitbox.user.service.response.AvgAttendanceInfo(a.attendanceDate, COUNT(a.attendanceId) ) " +
+    @Query(value = "SELECT new com.bitbox.user.service.response.AvgAttendanceInfo(a.attendanceDate, SUM(CASE WHEN m.classId = :classId AND a.attendanceState = 'ATTENDANCE' THEN 1 ELSE 0 END)) " +
             "FROM Attendance a INNER JOIN Member m ON a.member.memberId = m.memberId " +
-            "WHERE m.classId = :classId AND a.attendanceState = 'ATTENDANCE' AND a.attendanceDate BETWEEN :before AND :after " +
+            "WHERE a.attendanceDate BETWEEN :before AND :after " +
             "GROUP BY a.attendanceDate")
     List<AvgAttendanceInfo> findByClassIdForAdminDashBoard(@Param("classId") long classId, @Param("before") LocalDate before, @Param("after") LocalDate after);
 
