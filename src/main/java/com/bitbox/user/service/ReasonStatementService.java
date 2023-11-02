@@ -11,6 +11,7 @@ import com.bitbox.user.repository.ReasonStatementRepository;
 import com.bitbox.user.repository.RejectReasonRepository;
 import com.bitbox.user.service.response.ReasonStatementWithAttendanceAndMember;
 import com.bitbox.user.service.response.ReasonStatementsWithCountResponse;
+import io.github.bitbox.bitbox.enums.AttendanceStatus;
 import io.github.bitbox.bitbox.enums.ReasonStatementStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,9 +73,14 @@ public class ReasonStatementService {
     @Transactional
     public void modifyReasonStatementState(Long reasonStatementId, ReasonStatementUpdateDto reasonStatementUpdateDto) {
         ReasonStatement result = reasonStatementRepository.findByReasonStatementId(reasonStatementId);
+        Attendance attendance = attendanceRepository.findByAttendanceId(result.getAttendance().getAttendanceId());
+
         result.setReasonState(reasonStatementUpdateDto.getReasonState());
 
-        if (reasonStatementUpdateDto.getReasonState() == ReasonStatementStatus.APPROVE) return;
+        if (reasonStatementUpdateDto.getReasonState() == ReasonStatementStatus.APPROVE) {
+            attendance.setAttendanceState(AttendanceStatus.ATTENDANCE);
+            return;
+        }
 
         RejectReason test = RejectReason.builder().reasonStatementId(reasonStatementId).reasonStatement(result).rejectReason(reasonStatementUpdateDto.getRejectReason()).build();
         rejectReasonRepository.save(test);
