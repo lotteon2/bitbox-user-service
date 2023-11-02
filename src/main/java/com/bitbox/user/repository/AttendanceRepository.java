@@ -27,7 +27,7 @@ public interface AttendanceRepository extends CrudRepository<Attendance, Long> ,
             "FROM Attendance a INNER JOIN Member m ON a.member.memberId = m.memberId " +
             "WHERE a.attendanceDate BETWEEN :before AND :after " +
             "GROUP BY a.attendanceDate")
-    List<AvgAttendanceInfo> findByClassIdForAdminDashBoard(@Param("classId") long classId, @Param("before") LocalDate before, @Param("after") LocalDate after);
+    List<AvgAttendanceInfo> findByClassIdForAdminDashBoardOOrderByAttendanceDate(@Param("classId") long classId, @Param("before") LocalDate before, @Param("after") LocalDate after);
 
 
     @Query(value = "SELECT a FROM Attendance a " +

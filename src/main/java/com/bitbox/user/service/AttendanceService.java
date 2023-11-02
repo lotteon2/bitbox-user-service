@@ -72,7 +72,7 @@ public class AttendanceService {
      * @return
      */
     public List<AvgAttendanceInfo> getAttendanceForDashboard(long classId) {
-        return attendanceRepository.findByClassIdForAdminDashBoard(classId, LocalDate.now().minusDays(6), LocalDate.now());
+        return attendanceRepository.findByClassIdForAdminDashBoardOOrderByAttendanceDate(classId, LocalDate.now().minusDays(6), LocalDate.now());
     }
 
     /**
