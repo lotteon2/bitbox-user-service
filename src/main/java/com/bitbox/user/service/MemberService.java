@@ -20,6 +20,8 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -223,6 +225,23 @@ public class MemberService {
 
 
         return MemberTraineeResult.builder().validMember(validMember).invalidMember(invalidMember).build();
+    }
+
+    @KafkaListener(topics = "${deleteTopic}")
+    @Transactional
+    public void adminMemberBoard(Long classId, LocalDateTime requestDate) {
+        List<Member> traineeList = memberInfoRepository.findAllTraineeByClassId(classId);
+
+        for (Member trainee: traineeList) {
+            try {
+                trainee.setMemberAuthority(AuthorityType.GENERAL);
+                trainee.setClassId(null);
+            } catch (Exception e) {
+                log.error(requestDate + "adminMemberBoardTopic Error" + trainee.getMemberId());
+                throw e;
+            }
+
+        }
     }
 
     @Transactional

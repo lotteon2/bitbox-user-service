@@ -7,6 +7,7 @@ import com.bitbox.user.service.response.MemberInfoWithCountResponse;
 import io.github.bitbox.bitbox.dto.*;
 import io.github.bitbox.bitbox.enums.AuthorityType;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.asm.Advice;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -78,16 +79,6 @@ public class MemberController {
     @PatchMapping("/admin")
     public ResponseEntity<AuthorityType> updateMemberInfo(@RequestBody MemberAuthorityDto memberAuthorityDto) {
         return ResponseEntity.ok(memberService.modifyMemberInfo(memberAuthorityDto));
-    }
-
-    /**
-     * 반 삭제
-     */
-    @KafkaListener(topics = "${deleteTopic}")
-    @PatchMapping("/admin/delete")
-    public ResponseEntity<Void> deletedClass(@RequestBody Long classId) {
-        memberService.modifyAuthorityByClassId(classId, AuthorityType.GENERAL);
-        return ResponseEntity.ok().build();
     }
 
     /**

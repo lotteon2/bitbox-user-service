@@ -50,6 +50,8 @@ public interface MemberInfoRepository extends CrudRepository<Member, String> {
      */
     List<Member> findAllByClassId(Long classId);
 
+    @Query(value = "SELECT m FROM Member m WHERE m.classId = :classId AND m.memberAuthority = 'TRAINEE'")
+    List<Member> findAllTraineeByClassId(Long classId);
 //    List<Member> findAllAndDeletedIsFalse();
 
 }
