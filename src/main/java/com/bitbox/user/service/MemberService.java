@@ -229,15 +229,15 @@ public class MemberService {
 
     @KafkaListener(topics = "${deleteTopic}")
     @Transactional
-    public void adminMemberBoard(Long classId, LocalDateTime requestDate) {
-        List<Member> traineeList = memberInfoRepository.findAllTraineeByClassId(classId);
+    public void adminMemberBoard(AdminMemberBoardDto requestDto) {
+        List<Member> traineeList = memberInfoRepository.findAllTraineeByClassId(requestDto.getClassId());
 
         for (Member trainee: traineeList) {
             try {
                 trainee.setMemberAuthority(AuthorityType.GENERAL);
                 trainee.setClassId(null);
             } catch (Exception e) {
-                log.error(requestDate + "adminMemberBoardTopic Error" + trainee.getMemberId());
+                log.error(requestDto.getRequestDate() + "adminMemberBoardTopic Error" + trainee.getMemberId());
                 throw e;
             }
 
