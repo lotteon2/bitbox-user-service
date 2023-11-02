@@ -58,7 +58,7 @@ public class AttendanceUtil {
         if (!(memberInfo.getMemberId().equals(memberId)) || current.isBefore(AttendanceUtil.ATTENDANCE_TIME_VALID) || current.isAfter(AttendanceUtil.AFTER_ATTENDANCE_TIME_QUIT)) throw new InvalidAttendanceRequestException("유효하지 않은 출결 요청입니다.");
 
         // 현재 출결상태인 경우
-        if (attendance.getAttendanceState() == AttendanceStatus.ATTENDANCE || attendance.getAttendanceState() == AttendanceStatus.GO_OUT) {
+        if (attendance.getAttendanceState() == AttendanceStatus.ATTENDANCE || attendance.getAttendanceState() == AttendanceStatus.LEAVE_EARLY) {
             // 14시 ~ 18시 퇴실 => 조퇴
             if (current.isAfter(AttendanceUtil.ATTENDANCE_TIME_VALID) && current.isBefore(AttendanceUtil.ATTENDANCE_TIME_QUIT)) {
                 attendance.setAttendanceState(AttendanceStatus.LEAVE_EARLY);
