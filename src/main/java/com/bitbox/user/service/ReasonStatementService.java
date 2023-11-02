@@ -47,7 +47,7 @@ public class ReasonStatementService {
      * @return
      */
     public ReasonStatementsWithCountResponse getReasonStatements(Long classId, Pageable paging) {
-        Page<ReasonStatementWithAttendanceAndMember> statementList = reasonStatementRepository.findAllByClassIdOrderByReasonStatementId(classId, paging);
+        Page<ReasonStatementWithAttendanceAndMember> statementList = reasonStatementRepository.findAllByClassIdOrderByReasonStatementIdDesc(classId, paging);
 
         return ReasonStatementsWithCountResponse.builder().reasonStatements(statementList.getContent()).totalCount(reasonStatementRepository.countByClassId(classId)).build();
     }
