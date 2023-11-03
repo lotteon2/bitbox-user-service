@@ -121,6 +121,7 @@ public class MemberService {
         Member memberInfo = memberInfoRepository.findByMemberIdForAdmin(memberAuthorityDto.getMemberId());
 
         memberInfo.setMemberAuthority(memberAuthorityDto.getMemberAuthority());
+        memberInfo.setClassId(null);
         return memberInfo.getMemberAuthority();
     }
 
