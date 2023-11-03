@@ -27,6 +27,12 @@ public interface MemberInfoRepository extends CrudRepository<Member, String> {
      */
     Optional<Member> findByMemberIdAndDeletedIsFalse(String memberId);
 
+    /**
+     * 관리자 전체 학생 조회
+     */
+    @Query(value = "SELECT m FROM Member m WHERE m.memberId = :memberId")
+    Member findByMemberIdForAdmin(String memberId);
+
     Optional<Member> findByMemberId(String memberId);
 
     /**
@@ -36,6 +42,7 @@ public interface MemberInfoRepository extends CrudRepository<Member, String> {
      */
     @Query(value = "SELECT m FROM Member m WHERE m.classId = :classId AND m.memberAuthority = 'TRAINEE' ORDER BY m.memberName")
     Page<Member> findAllByClassIdOrderByMemberNickname(Long classId, Pageable paging);
+
 
     /**
      * 회원정보 조회 전체 학생 수

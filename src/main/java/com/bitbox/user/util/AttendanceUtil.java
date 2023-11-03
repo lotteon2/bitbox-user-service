@@ -65,8 +65,9 @@ public class AttendanceUtil {
             }
             // 18시 ~ 22시 퇴실 => 출석 유지
         }
+        // 현재 조퇴 상태인 경우
         if (attendance.getAttendanceState() == AttendanceStatus.LEAVE_EARLY) {
-            // 14시 ~ 18시 퇴실 => 조퇴
+            // 18시 ~ 22시 퇴실 => 출석
             if (current.isAfter(AttendanceUtil.ATTENDANCE_TIME_QUIT)) {
                 attendance.setAttendanceState(AttendanceStatus.ATTENDANCE);
             }

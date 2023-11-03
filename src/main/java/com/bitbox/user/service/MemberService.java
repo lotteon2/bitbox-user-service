@@ -118,7 +118,7 @@ public class MemberService {
     @KafkaListener(topics = "${modifyTopic}")
     @Transactional
     public AuthorityType modifyMemberInfo(MemberAuthorityDto memberAuthorityDto) {
-        Member memberInfo = findByMemberId(memberAuthorityDto.getMemberId());
+        Member memberInfo = memberInfoRepository.findByMemberIdForAdmin(memberAuthorityDto.getMemberId());
 
         memberInfo.setMemberAuthority(memberAuthorityDto.getMemberAuthority());
         return memberInfo.getMemberAuthority();
